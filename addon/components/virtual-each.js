@@ -38,16 +38,16 @@ export default Component.extend(EventListenerMixin, DefaultAttrs, {
       const timeout = this.getAttr('scrollTimeout');
 
       if (timeout && isWebkit && this._scrolledByWheel) {
-          this._scrolledByWheel = false;
+        this._scrolledByWheel = false;
 
-          if (!this._scrollTimer) {
-            this._scrollTimer = setTimeout(() => {
-              this._scrollTimer = null;
-              this._calculateVisibleItems();
-            }, timeout);
-          }
+        if (!this._scrollTimer) {
+          this._scrollTimer = setTimeout(() => {
+            this._scrollTimer = null;
+            this._calculateVisibleItems();
+          }, timeout);
+        }
 
-          return;
+        return;
       }
 
       this._calculateVisibleItems();
@@ -64,7 +64,12 @@ export default Component.extend(EventListenerMixin, DefaultAttrs, {
       let renderedStart = this.get('renderedStart');
       let visibleItemCount = this.get('visibleItemCount');
 
-      return items.slice(renderedStart, renderedStart + visibleItemCount);
+      return items.slice(renderedStart, renderedStart + visibleItemCount).map(function(raw, index) {
+        return {
+          raw: raw,
+          index: renderedStart + index
+        }
+      });
     }
   }),
 

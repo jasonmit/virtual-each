@@ -14,12 +14,12 @@ If you want a more flexible, feature-complete, virtualized list/grid component, 
 {{#virtual-each
   height=200
   itemHeight=36
-  items=items as |item|
+  items=items as |item index|
 }}
   <div class="person-row">
     <img src={{item.picture}} />
     <div>
-      <div>{{item.name.last}}, {{item.name.first}}</div>
+      <div>{{index}} {{item.name.last}}, {{item.name.first}}</div>
       <div class="company">{{item.company}}</div>
     </div>
   </div>
