@@ -14,10 +14,11 @@ let isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
 
 export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   layout,
-  totalHeight: 0,
-  content: null,
   classNames: ['virtual-each'],
   attributeBindings: ['style'],
+
+  totalHeight: 0,
+  content: null,
   renderedStart: 0,
 
   defaultAttrs: {
