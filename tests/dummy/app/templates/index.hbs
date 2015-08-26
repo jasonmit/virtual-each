@@ -1,0 +1,15 @@
+<button {{action 'selected' 'people'}}>People</button>
+<button {{action 'selected' 'countries'}}>Countries</button>
+<div>
+  <button {{action 'grow'}}>Grow</button>
+  <button {{action 'shrink'}}>Shrink</button>
+  <div>
+    {{input
+      placeholder='Scroll Debounce Timeout (ms)'
+      value=scrollTimeout
+      key-up=(action 'changeTimeout')
+    }}
+  </div>
+</div>
+
+{{component componentName items=currentModel height=height scrollTimeout=scrollTimeout}}

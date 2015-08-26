@@ -1,0 +1,23 @@
+body, html {
+  font-family: Helvetica;
+}
+
+.virtual-each {
+	overflow-y: auto;
+	margin-top: 20px;
+}
+
+.person-row {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.person-row .company {
+  color: #788;
+  font-size: 12px;
+}
+
+.person-row img {
+  padding-right: 5px;
+}

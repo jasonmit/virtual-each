@@ -1,0 +1,7 @@
+<div class="infinite-list-content" style="height: {{contentHeight}}px; padding-top: {{paddingTop}}px">
+{{#each visibleItems key='@index' as |item index|}}
+  {{#virtual-item}}
+    {{yield item index}}
+  {{/virtual-item}}
+{{/each}}
+</div>
