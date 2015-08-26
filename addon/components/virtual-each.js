@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import computed from 'ember-new-computed';
 import EventListenerMixin from '../mixins/event-listener';
-import DefaultAttrs from '../mixins/default-attrs';
+import DefaultAttrsMixin from '../mixins/default-attrs';
 import layout from '../templates/components/virtual-each';
 
 let {
@@ -12,12 +12,13 @@ let {
 
 let isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
 
-export default Component.extend(EventListenerMixin, DefaultAttrs, {
+export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   layout,
-  totalHeight: 0,
-  content: null,
   classNames: ['virtual-each'],
   attributeBindings: ['style'],
+
+  totalHeight: 0,
+  content: null,
   renderedStart: 0,
 
   defaultAttrs: {
