@@ -42,6 +42,10 @@ Add the following CSS snippet to `styles/app.css`:
 }
 ```
 
+## Demo
+
+![](images/screencast.gif)
+
 ## Requirements
 
 * Ember >= 1.13.0
