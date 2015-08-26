@@ -5,6 +5,13 @@ body, html {
 .virtual-each {
 	overflow-y: auto;
 	margin-top: 20px;
+  width: 300px;
+}
+
+.infinite-list-content {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .person-row {

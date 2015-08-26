@@ -35,14 +35,16 @@ export default Component.extend(EventListenerMixin, DefaultAttrs, {
     scroll(e) {
       e.preventDefault();
 
-      if (this.getAttr('scrollTimeout') && isWebkit && this._scrolledByWheel) {
+      const timeout = this.getAttr('scrollTimeout');
+
+      if (timeout && isWebkit && this._scrolledByWheel) {
           this._scrolledByWheel = false;
 
           if (!this._scrollTimer) {
             this._scrollTimer = setTimeout(() => {
               this._scrollTimer = null;
               this._calculateVisibleItems();
-            }, this.getAttr('scrollTimeout'));
+            }, timeout);
           }
 
           return;
