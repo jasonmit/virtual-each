@@ -1,5 +1,9 @@
 # virtual-each
 
+[![Dependency Status](https://david-dm.org/jasonmit/virtual-each.svg)](https://david-dm.org/jasonmit/virtual-each)
+[![devDependency Status](https://david-dm.org/jasonmit/virtual-each/dev-status.svg)](https://david-dm.org/jasonmit/virtual-each#info=devDependencies)
+![NPM Version](https://img.shields.io/npm/v/virtual-each.svg)
+
 A direct port of react-infinite-list to Ember.  This was created as a benchmark exercise.
 
 If you want a more flexible, feature-complete, virtualized list/grid component, please see [ember-collection](https://github.com/emberjs/ember-collection).
