@@ -22,6 +22,22 @@ If you want a more flexible, feature-complete, virtualized list/grid component, 
 {{/virtual-each}}
 ```
 
+## CSS
+
+Add the following CSS snippet to `styles/app.css`:
+
+```css
+.virtual-each {
+  overflow-y: auto;
+}
+
+.infinite-list-content {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+```
+
 ## Installation
 
 * `git clone` this repository
