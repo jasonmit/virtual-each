@@ -11,7 +11,10 @@
     "start": "ember server",
     "test": "ember try:testall"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jasonmit/virtual-each.git"
+  },
   "engines": {
     "node": ">= 0.10.0"
   },
@@ -37,7 +40,9 @@
     "ember-try": "0.0.6"
   },
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "infinite-scrolling",
+    "list"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.3",
