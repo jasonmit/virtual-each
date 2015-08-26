@@ -42,6 +42,10 @@ Add the following CSS snippet to `styles/app.css`:
 }
 ```
 
+## Requirements
+
+* Ember >= 1.13.0
+
 ## Installation
 
 * `git clone` this repository
