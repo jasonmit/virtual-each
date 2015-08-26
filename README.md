@@ -6,7 +6,9 @@
 
 A direct port of react-infinite-list to Ember.  This was created as a benchmark exercise.
 
-If you want a more flexible, feature-complete, virtualized list/grid component, please see [ember-collection](https://github.com/emberjs/ember-collection).
+This component will only ever render DOM nodes for what can fill the view port.  Using the power of Glimmer, it will reuse the DOM nodes it's already created and swap out the content as the user scrolls.
+
+If you want a more flexible virtualization component, please try [ember-collection](https://github.com/emberjs/ember-collection).
 
 ## Usage
 
