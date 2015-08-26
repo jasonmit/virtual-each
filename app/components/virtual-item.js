@@ -1,5 +1,1 @@
-import Ember from 'ember';
-
-export default Ember.Component.extend({
-  classNames: ['virtual-item']
-});
+export { default } from 'virtual-each/components/virtual-item';
