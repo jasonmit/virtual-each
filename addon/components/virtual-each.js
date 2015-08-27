@@ -6,6 +6,7 @@ import layout from '../templates/components/virtual-each';
 
 const {
   Component,
+  Handlebars,
   String:emberString,
   run:emberRun
 } = Ember;
@@ -56,9 +57,19 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   },
 
+  safeStyle: computed('paddingTop', 'contentHeight', {
+    get() {
+      let paddingTop = Handlebars.Utils.escapeExpression(this.get('paddingTop'));
+      let height = Handlebars.Utils.escapeExpression(this.get('contentHeight'));
+
+      return new Handlebars.SafeString(`height: ${height}px; padding-top: ${paddingTop}px;`);
+    }
+  }),
+
   style: computed('height', {
     get() {
-      return emberString.fmt('height: %@px', this.getAttr('height'));
+      let height = Handlebars.Utils.escapeExpression(this.getAttr('height'));
+      return new Handlebars.SafeString(`height: ${height}px;`);
     }
   }),
 

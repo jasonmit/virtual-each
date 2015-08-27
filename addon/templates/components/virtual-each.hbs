@@ -1,4 +1,4 @@
-<ul class="infinite-list-content" style="height: {{contentHeight}}px; padding-top: {{paddingTop}}px">
+<ul class="infinite-list-content" style={{safeStyle}}>
 {{#each visibleItems key='@index' as |item|}}
   {{#virtual-item}}
     {{yield item.model item.index}}
