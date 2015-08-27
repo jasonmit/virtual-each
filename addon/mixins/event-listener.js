@@ -1,3 +1,5 @@
+import Ember from 'ember';
+
 export default Ember.Mixin.create({
   eventHandlers: {},
 
@@ -12,20 +14,16 @@ export default Ember.Mixin.create({
   didInsertElement() {
     this._super(...arguments);
 
-    var element = this.$()[0];
-
     Object.keys(this.eventHandlers).forEach((eventName) => {
-      element.addEventListener(eventName, this, false);
+      this.element.addEventListener(eventName, this, false);
     });
   },
 
   willDestroyElement() {
     this._super(...arguments);
 
-    var element = this.$()[0];
-
     Object.keys(this.eventHandlers).forEach((eventName) => {
-      element.removeEventListener(eventName, this, false);
+      this.element.removeEventListener(eventName, this, false);
     });
-  },
-})
+  }
+});

@@ -1,7 +1,7 @@
 <ul class="infinite-list-content" style={{safeStyle}}>
 {{#each visibleItems key='@index' as |item|}}
   {{#virtual-item}}
-    {{yield item.model item.index}}
+    {{yield item.raw item.index}}
   {{/virtual-item}}
 {{/each}}
 </ul>
