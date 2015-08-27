@@ -17,7 +17,7 @@ If you want a more flexible virtualization component, please try [ember-collecti
   height=200 // required: total height
   itemHeight=36 // required: row height
   onBotttom=(action 'handlePageBottom') // optional: invoked when the scroller hits the bottom
-  positionIndex=0 // optional: used to scroll to specific indexes
+  positionIndex=0 // optional: used to scroll to a specific item index
   items=items as |item index|
 }}
   <div class="person-row">
