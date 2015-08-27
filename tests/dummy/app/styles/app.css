@@ -28,3 +28,33 @@ body, html {
 .person-row img {
   padding-right: 5px;
 }
+
+input[type='text'] {
+  padding: 5px;
+  font-size: 12px;
+  width: 200px;
+}
+
+.row {
+  margin: 5px 0;
+}
+
+.label {
+  color: #333;
+  font-size: 13px;
+}
+
+button {
+  padding: 4px;
+  border-radius: 2px;
+  background: #F7F7F7;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  box-shadow: 1px 1px 0px 0px #EAEAEA;
+  color: #565656;
+}
+
+button:hover {
+  box-shadow: none;
+  cursor: pointer;
+}

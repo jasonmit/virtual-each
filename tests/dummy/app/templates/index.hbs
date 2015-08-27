@@ -1,17 +1,18 @@
-<button {{action 'selected' 'people'}}>People</button>
-<button {{action 'selected' 'countries'}}>Countries</button>
-<div>
-  <button {{action 'grow'}}>Grow</button>
-  <button {{action 'shrink'}}>Shrink</button>
-  <div>
+<div class="row">
+  <span class="label">List Height:</span>
+  <button {{action 'grow'}}>Increase</button>
+  <button {{action 'shrink'}}>Decrease</button>
+  <div class="row">
     <input
+      type="text"
       value={{scrollTimeout}}
       placeholder='Scroll Debounce Timeout (ms)'
       oninput={{action "setScrollTimeout" value="target.value"}}
     />
   </div>
-  <div>
+  <div class="row">
     <input
+      type="text"
       value={{positionIndex}}
       placeholder='Scroll to position (number)'
       oninput={{action "setPositionIndex" value="target.value"}}
