@@ -4,12 +4,23 @@
   <button {{action 'grow'}}>Grow</button>
   <button {{action 'shrink'}}>Shrink</button>
   <div>
-    {{input
+    <input
+      value={{scrollTimeout}}
       placeholder='Scroll Debounce Timeout (ms)'
-      value=scrollTimeout
-      key-up=(action 'changeTimeout')
-    }}
+      oninput={{action "setScrollTimeout" value="target.value"}}
+    />
+  </div>
+  <div>
+    <input
+      value={{positionIndex}}
+      placeholder='Scroll to position (number)'
+      oninput={{action "setPositionIndex" value="target.value"}}
+    />
   </div>
 </div>
 
-{{component componentName items=currentModel height=height scrollTimeout=scrollTimeout}}
+{{component componentName
+  items=currentModel
+  height=height
+  positionIndex=positionIndex
+  scrollTimeout=scrollTimeout}}

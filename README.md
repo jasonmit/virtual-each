@@ -14,15 +14,16 @@ If you want a more flexible virtualization component, please try [ember-collecti
 
 ```hbs
 {{#virtual-each
-  height=200
-  itemHeight=36
-  onBotttom=(action 'handlePageBottom')
+  height=200 // required: total height
+  itemHeight=36 // required: row height
+  onBotttom=(action 'handlePageBottom') // optional: invoked when the scroller hits the bottom
+  positionIndex=0 // optional: used to scroll to specific indexes
   items=items as |item index|
 }}
   <div class="person-row">
     <img src={{item.picture}} />
     <div>
-      <div>{{index}} {{item.name.last}}, {{item.name.first}}</div>
+      <div>{{index}}. {{item.name.last}}, {{item.name.first}}</div>
       <div class="company">{{item.company}}</div>
     </div>
   </div>

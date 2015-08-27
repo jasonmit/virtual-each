@@ -11,7 +11,6 @@ const {
 } = Ember;
 
 const { SafeString } = Handlebars;
-const isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
 const EXTRA_ROW_PADDING = 1;
 
 export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
@@ -19,11 +18,11 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   classNames: ['virtual-each'],
   attributeBindings: ['style'],
 
-  _itemHeight: null,
   _totalHeight: 0,
   _startAt: 0,
 
   defaultAttrs: {
+    positionIndex: 0,
     scrollTimeout: 30,
     height: 200,
     itemHeight: 20,
@@ -38,22 +37,22 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     scroll(e) {
       e.preventDefault();
 
-      const timeout = this.getAttr('scrollTimeout');
+      const scrollTimeout = this.getAttr('scrollTimeout');
 
-      if (timeout && isWebkit && this._scrolledByWheel) {
+      if (scrollTimeout && this.isWebkit && this._scrolledByWheel) {
         this._scrolledByWheel = false;
 
         if (!this._scrollTimer) {
           this._scrollTimer = setTimeout(() => {
             this._scrollTimer = null;
-            this._calculateVisibleItems();
-          }, timeout);
+            this.calculateVisibleItems();
+          }, scrollTimeout);
         }
 
         return;
       }
 
-      this._calculateVisibleItems();
+      this.calculateVisibleItems();
     }
   },
 
@@ -97,22 +96,20 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   }),
 
-  visibleItemCount: computed('height', '_itemHeight', {
+  visibleItemCount: computed('height', 'itemHeight', {
     get() {
       let height = this.getAttr('height');
-      let _itemHeight = this.get('_itemHeight');
-
-      return Math.ceil(height / _itemHeight) + EXTRA_ROW_PADDING;
+      return Math.ceil(height / this.getAttr('itemHeight')) + EXTRA_ROW_PADDING;
     }
   }),
 
-  paddingTop: computed('_totalHeight', 'visibleItemCount', '_itemHeight', '_startAt', {
+  paddingTop: computed('_totalHeight', 'visibleItemCount', 'itemHeight', '_startAt', {
     get() {
-      let _itemHeight = this.get('_itemHeight');
+      let itemHeight = this.getAttr('itemHeight');
       let _totalHeight = this.get('_totalHeight');
-      let padding = this.get('_startAt') * _itemHeight;
+      let padding = this.get('_startAt') * itemHeight;
       let visibleItemCount = this.get('visibleItemCount');
-      let maxPadding = Math.max(0, _totalHeight - (visibleItemCount * _itemHeight) + _itemHeight);
+      let maxPadding = Math.max(0, _totalHeight - (visibleItemCount * itemHeight) + itemHeight);
 
       return Math.min(maxPadding, padding);
     }
@@ -124,11 +121,11 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   }),
 
-  _calculateVisibleItems() {
+  calculateVisibleItems(positionIndex) {
     emberRun(() => {
       let _startAt = this.get('_startAt');
       let scrolledAmount = this.$().scrollTop();
-      let visibleStart = Math.floor(scrolledAmount / this.get('_itemHeight'));
+      let visibleStart = positionIndex || Math.floor(scrolledAmount / this.getAttr('itemHeight'));
 
       if (visibleStart !== _startAt) {
         this.set('_startAt', visibleStart);
@@ -136,19 +133,27 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     });
   },
 
+  didInsertElement() {
+    this._super(...arguments);
+
+    this.isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
+  },
+
+  scrollTo(positionIndex) {
+    this.calculateVisibleItems(positionIndex);
+    this.$().scrollTop(positionIndex * this.getAttr('itemHeight'));
+  },
+
   didReceiveAttrs(attrs) {
     this._super(...arguments);
 
-    let items = this.getAttr('items');
-    let _itemHeight = this.getAttr('itemHeight');
+    let items = Ember.A(this.getAttr('items'));
+    this.set('_items', items);
+    this.set('_totalHeight', Math.max(items.length * this.getAttr('itemHeight'), 0));
 
-    this.set('_items', Ember.A(items));
-    this.set('_itemHeight', _itemHeight);
-    this.set('_totalHeight', Math.max(items.length * _itemHeight, 0));
-
-    if (attrs.newAttrs.hasOwnProperty('items')) {
+    if (attrs.newAttrs.hasOwnProperty('items') || attrs.newAttrs.hasOwnProperty('positionIndex')) {
       Ember.run.scheduleOnce('afterRender', () => {
-        this.$().scrollTop = 0;
+        this.scrollTo(this.getAttr('positionIndex'));
       });
     }
   }
