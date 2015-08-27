@@ -78,7 +78,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
       let items = this.get('items');
       let startAt = this.get('_startAt');
       let visibleItemCount = this.get('visibleItemCount');
-      let endAt = startAt + visibleItemCount;
+      let endAt = Math.min(items.length, startAt + visibleItemCount);
       let onBottom = this.attrs.onBottom;
       let out = [];
 
@@ -102,7 +102,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
       let height = this.getAttr('height');
       let _itemHeight = this.get('_itemHeight');
 
-      return Math.ceil(height / _itemHeight) + 1;
+      return Math.ceil(height / _itemHeight) + EXTRA_ROW_PADDING;
     }
   }),
 
