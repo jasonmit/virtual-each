@@ -1,8 +1,8 @@
 # virtual-each
-
+![NPM Version](https://img.shields.io/npm/v/virtual-each.svg)
+[![Build Status](https://travis-ci.org/jasonmit/virtual-each.svg?branch=master)](https://travis-ci.org/jason/virtual-each)
 [![Dependency Status](https://david-dm.org/jasonmit/virtual-each.svg)](https://david-dm.org/jasonmit/virtual-each)
 [![devDependency Status](https://david-dm.org/jasonmit/virtual-each/dev-status.svg)](https://david-dm.org/jasonmit/virtual-each#info=devDependencies)
-![NPM Version](https://img.shields.io/npm/v/virtual-each.svg)
 
 A direct port of react-infinite-list to Ember.  This was created as a benchmark exercise.
 
