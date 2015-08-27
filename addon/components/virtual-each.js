@@ -99,6 +99,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   visibleItemCount: computed('height', 'itemHeight', {
     get() {
       let height = this.getAttr('height');
+
       return Math.ceil(height / this.getAttr('itemHeight')) + EXTRA_ROW_PADDING;
     }
   }),
@@ -106,10 +107,10 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   paddingTop: computed('_totalHeight', 'visibleItemCount', 'itemHeight', '_startAt', {
     get() {
       let itemHeight = this.getAttr('itemHeight');
-      let _totalHeight = this.get('_totalHeight');
+      let totalHeight = this.get('_totalHeight');
       let padding = this.get('_startAt') * itemHeight;
       let visibleItemCount = this.get('visibleItemCount');
-      let maxPadding = Math.max(0, _totalHeight - (visibleItemCount * itemHeight) + itemHeight);
+      let maxPadding = Math.max(0, totalHeight - (visibleItemCount * itemHeight) + itemHeight);
 
       return Math.min(maxPadding, padding);
     }
@@ -123,11 +124,11 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
 
   calculateVisibleItems(positionIndex) {
     emberRun(() => {
-      let _startAt = this.get('_startAt');
+      let startAt = this.get('_startAt');
       let scrolledAmount = this.$().scrollTop();
       let visibleStart = positionIndex || Math.floor(scrolledAmount / this.getAttr('itemHeight'));
 
-      if (visibleStart !== _startAt) {
+      if (visibleStart !== startAt) {
         this.set('_startAt', visibleStart);
       }
     });
