@@ -20,6 +20,8 @@ function coerceSet(attributeName) {
 
 export default Ember.Controller.extend({
   actions: {
+    setScrollTimeout: coerceSet('scrollTimeout'),
+    setPositionIndex: coerceSet('positionIndex'),
     selected(modelType) {
       this.set('selected', modelType);
     },
@@ -28,9 +30,7 @@ export default Ember.Controller.extend({
     },
     shrink() {
       this.set('height', this.get('height') - this.get('height') * 0.3);
-    },
-    setScrollTimeout: coerceSet('scrollTimeout'),
-    setPositionIndex: coerceSet('positionIndex')
+    }
   },
 
   positionIndex: null,
