@@ -141,8 +141,9 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   },
 
   scrollTo(positionIndex) {
-    this.calculateVisibleItems(positionIndex);
-    this.$().scrollTop(positionIndex * this.getAttr('itemHeight'));
+    let sanitizedIndex = Math.max(positionIndex, 0);
+    this.calculateVisibleItems(sanitizedIndex);
+    this.$().scrollTop(sanitizedIndex * this.getAttr('itemHeight'));
   },
 
   didReceiveAttrs(attrs) {
