@@ -16,6 +16,7 @@ If you want a more flexible virtualization component, please try [ember-collecti
 {{#virtual-each
   height=200
   itemHeight=36
+  onBotttom=(action 'handlePageBottom')
   items=items as |item index|
 }}
   <div class="person-row">

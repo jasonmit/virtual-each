@@ -4,13 +4,14 @@ import EventListenerMixin from '../mixins/event-listener';
 import DefaultAttrsMixin from '../mixins/default-attrs';
 import layout from '../templates/components/virtual-each';
 
-let {
+const {
   Component,
   String:emberString,
   run:emberRun
 } = Ember;
 
-let isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
+const isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
+const EXTRA_ROW_PADDING = 1;
 
 export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   layout,
@@ -55,21 +56,29 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   },
 
-  style: computed('height', function() {
-    return emberString.fmt('height: %@px', this.getAttr('height'));
+  style: computed('height', {
+    get() {
+      return emberString.fmt('height: %@px', this.getAttr('height'));
+    }
   }),
 
   visibleItems: computed('items', 'renderedStart', 'visibleItemCount', {
     get() {
       let items = this.get('items');
-      let renderedStart = this.get('renderedStart');
+      let startAt = this.get('renderedStart');
       let visibleItemCount = this.get('visibleItemCount');
+      let endAt = startAt + visibleItemCount;
+      let onBottom = this.attrs.onBottom;
 
-      return items.slice(renderedStart, renderedStart + visibleItemCount).map(function(raw, index) {
+      if (onBottom && (startAt + visibleItemCount - EXTRA_ROW_PADDING) >= items.length) {
+        onBottom(startAt, endAt);
+      }
+
+      return items.slice(startAt, endAt).map(function(model, index) {
         return {
-          raw: raw,
-          index: renderedStart + index
-        }
+          model: model,
+          index: startAt + index
+        };
       });
     }
   }),
@@ -127,7 +136,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     let itemHeight = this.getAttr('itemHeight');
 
     this.set('items', items);
-    this.set('itemheight', itemHeight);
+    this.set('itemHeight', itemHeight);
     this.set('totalHeight', Math.max(items.length * itemHeight, 0));
   }
 });
