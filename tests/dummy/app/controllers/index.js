@@ -24,9 +24,6 @@ export default Controller.extend({
   actions: {
     setScrollTimeout: coerceSet('scrollTimeout'),
     setPositionIndex: coerceSet('positionIndex'),
-    numeric(e) {
-      return e.charCode >= 48 && e.charCode <= 57;
-    },
     selected(modelType) {
       this.set('selected', modelType);
     },

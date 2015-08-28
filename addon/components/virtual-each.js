@@ -20,6 +20,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
 
   _totalHeight: 0,
   _startAt: 0,
+  _scrolledByWheel: false,
 
   defaultAttrs: {
     positionIndex: 0,

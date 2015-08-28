@@ -3,22 +3,16 @@
   <button {{action 'grow'}}>Increase</button>
   <button {{action 'shrink'}}>Decrease</button>
   <div class="row">
-    <input
-      type="text"
-      value={{scrollTimeout}}
+    {{numeric-input
       placeholder='Scroll Debounce Timeout (ms)'
-      onkeypress={{action 'numeric'}}
-      oninput={{action "setScrollTimeout" value="target.value"}}
-    />
+      value=scrollTimeout
+      oninput=(action 'setScrollTimeout')}}
   </div>
   <div class="row">
-    <input
-      type="text"
-      value={{positionIndex}}
-      placeholder='Scroll to position (number)'
-      onkeypress={{action 'numeric'}}
-      oninput={{action "setPositionIndex" value="target.value"}}
-    />
+    {{numeric-input
+      placeholder='Position index'
+      value=positionIndex
+      oninput=(action 'setPositionIndex')}}
   </div>
 </div>
 
