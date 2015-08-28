@@ -142,7 +142,11 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   },
 
   scrollTo(positionIndex) {
-    let sanitizedIndex = Math.max(positionIndex, 0);
+    let sanitizedIndex = Math.min(
+      Math.max(positionIndex, 0),
+      (this.get('_items.length') - this.get('visibleItemCount'))
+    );
+
     this.calculateVisibleItems(sanitizedIndex);
     this.$().scrollTop(sanitizedIndex * this.getAttr('itemHeight'));
   },
