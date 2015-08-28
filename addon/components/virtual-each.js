@@ -69,6 +69,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   style: computed('height', {
     get() {
       let height = Handlebars.Utils.escapeExpression(this.getAttr('height'));
+
       return new SafeString(`height: ${height}px;`);
     }
   }),
