@@ -1,15 +1,17 @@
 import Ember from 'ember';
 import computed from 'ember-new-computed';
 
+const { Controller, run:emberRun } = Ember;
+
 function coerceSet(attributeName) {
   return function(value) {
     const schedulerName = attributeName + '_timer';
 
     if (schedulerName) {
-      Ember.run.cancel(this[schedulerName]);
+      emberRun.cancel(this[schedulerName]);
     }
 
-    this[schedulerName] = Ember.run.later(() => {
+    this[schedulerName] = emberRun.later(() => {
       const newValue = parseInt(value, 10);
       if (!Number.isNaN(newValue)) {
         this.set(attributeName, newValue);
@@ -18,10 +20,13 @@ function coerceSet(attributeName) {
   };
 }
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   actions: {
     setScrollTimeout: coerceSet('scrollTimeout'),
     setPositionIndex: coerceSet('positionIndex'),
+    numeric(e) {
+      return e.charCode >= 48 && e.charCode <= 57;
+    },
     selected(modelType) {
       this.set('selected', modelType);
     },

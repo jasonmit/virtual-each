@@ -7,6 +7,7 @@
       type="text"
       value={{scrollTimeout}}
       placeholder='Scroll Debounce Timeout (ms)'
+      onkeypress={{action 'numeric'}}
       oninput={{action "setScrollTimeout" value="target.value"}}
     />
   </div>
@@ -15,6 +16,7 @@
       type="text"
       value={{positionIndex}}
       placeholder='Scroll to position (number)'
+      onkeypress={{action 'numeric'}}
       oninput={{action "setPositionIndex" value="target.value"}}
     />
   </div>
