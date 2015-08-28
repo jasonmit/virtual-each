@@ -21,7 +21,8 @@
     "andThen",
     "currentURL",
     "currentPath",
-    "currentRouteName"
+    "currentRouteName",
+    "requestAnimationFrame"
   ],
   "node": false,
   "browser": false,

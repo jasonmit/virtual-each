@@ -7,6 +7,6 @@ export default Ember.Route.extend({
     return {
       people: People,
       countries: Countries
-    }
+    };
   }
 });
