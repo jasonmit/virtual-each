@@ -18,6 +18,7 @@ body, html {
   display: flex;
   align-items: center;
   padding: 2px 0;
+  position: relative;
 }
 
 .person-row .company {
@@ -57,4 +58,12 @@ button {
 button:hover {
   box-shadow: none;
   cursor: pointer;
+}
+
+.count {
+  position: absolute;
+  right: 8px;
+  top: calc(50% - 5px);
+  font-size: 10px;
+  color: #777;
 }

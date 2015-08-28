@@ -3,9 +3,10 @@
   itemHeight=36
   scrollTimeout=scrollTimeout
   positionIndex=positionIndex
-  items=items as |item|
+  items=items as |item index|
 }}
   <div class="person-row">
+    <div class="count">{{index}}</div>
     <img src={{item.picture}} />
     <div>
       <div>{{item.name.last}}, {{item.name.first}}</div>

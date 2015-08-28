@@ -80,20 +80,17 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
       let visibleItemCount = this.get('visibleItemCount');
       let endAt = Math.min(items.length, startAt + visibleItemCount);
       let onBottom = this.attrs.onBottom;
-      let out = [];
 
       if (onBottom && (startAt + visibleItemCount - EXTRA_ROW_PADDING) >= items.length) {
         onBottom(startAt, endAt);
       }
 
-      for (let i = startAt; i < endAt; i++) {
-        out.push({
-          raw: items.objectAt(i),
-          index: startAt + i
-        });
-      }
-
-      return out;
+      return items.slice(startAt, endAt).map((item, index) => {
+        return {
+          raw: item,
+          index: startAt + index
+        };
+      });
     }
   }),
 
