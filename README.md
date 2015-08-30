@@ -18,12 +18,12 @@ If you want a more flexible virtualization component, please try [ember-collecti
   itemHeight=36 // required: row height
   onBotttom=(action 'handlePageBottom') // optional: invoked when the scroller hits the bottom
   positionIndex=0 // optional: used to scroll to a specific item index
-  items=items as |item index|
+  items=items as |item actualIndex virtualIndex|
 }}
   <div class="person-row">
     <img src={{item.picture}} />
     <div>
-      <div>{{index}}. {{item.name.last}}, {{item.name.first}}</div>
+      <div>{{actualIndex}}. {{item.name.last}}, {{item.name.first}}</div>
       <div class="company">{{item.company}}</div>
     </div>
   </div>
