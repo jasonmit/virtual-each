@@ -38,7 +38,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     scroll(e) {
       e.preventDefault();
 
-      const scrollTimeout = this.getAttr('scrollTimeout');
+      let scrollTimeout = this.getAttr('scrollTimeout');
 
       if (scrollTimeout && this.isWebkit && this._scrolledByWheel) {
         this._scrolledByWheel = false;
@@ -57,15 +57,6 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   },
 
-  safeStyle: computed('paddingTop', 'contentHeight', {
-    get() {
-      let paddingTop = Handlebars.Utils.escapeExpression(this.get('paddingTop'));
-      let height = Handlebars.Utils.escapeExpression(this.get('contentHeight'));
-
-      return new SafeString(`height: ${height}px; padding-top: ${paddingTop}px;`);
-    }
-  }),
-
   style: computed('height', {
     get() {
       let height = Handlebars.Utils.escapeExpression(this.getAttr('height'));
@@ -74,28 +65,38 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   }),
 
-  visibleItems: computed('items', '_startAt', 'visibleItemCount', {
+  contentStyle: computed('_paddingTop', '_contentHeight', {
     get() {
-      let items = this.get('items');
-      let startAt = this.get('_startAt');
-      let visibleItemCount = this.get('visibleItemCount');
-      let endAt = Math.min(items.length, startAt + visibleItemCount);
-      let onBottom = this.attrs.onBottom;
+      let _paddingTop = Handlebars.Utils.escapeExpression(this.get('_paddingTop'));
+      let height = Handlebars.Utils.escapeExpression(this.get('_contentHeight'));
 
-      if (onBottom && (startAt + visibleItemCount - EXTRA_ROW_PADDING) >= items.length) {
-        onBottom(startAt, endAt);
+      return new SafeString(`height: ${height}px; padding-top: ${_paddingTop}px;`);
+    }
+  }),
+
+  _visibleItems: computed('_startAt', '_visibleItemCount', '_items', {
+    get() {
+      let items = this.get('_items');
+      let startAt = this.get('_startAt');
+      let _visibleItemCount = this.get('_visibleItemCount');
+      let endAt = Math.min(items.length, startAt + _visibleItemCount);
+      let onScrollBottomed = this.attrs.onScrollBottomed;
+
+      if (typeof onScrollBottomed === 'function' && (startAt + _visibleItemCount - EXTRA_ROW_PADDING) >= items.length) {
+        onScrollBottomed(startAt, endAt);
       }
 
       return items.slice(startAt, endAt).map((item, index) => {
         return {
           raw: item,
-          index: startAt + index
+          actualIndex: startAt + index,
+          virtualIndex: index
         };
       });
     }
   }),
 
-  visibleItemCount: computed('height', 'itemHeight', {
+  _visibleItemCount: computed('attrs.height', 'attrs.itemHeight', {
     get() {
       let height = this.getAttr('height');
 
@@ -103,21 +104,21 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   }),
 
-  paddingTop: computed('_totalHeight', 'visibleItemCount', 'itemHeight', '_startAt', {
+  _paddingTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'attrs.itemHeight', {
     get() {
       let itemHeight = this.getAttr('itemHeight');
       let totalHeight = this.get('_totalHeight');
       let padding = this.get('_startAt') * itemHeight;
-      let visibleItemCount = this.get('visibleItemCount');
-      let maxPadding = Math.max(0, totalHeight - (visibleItemCount * itemHeight) + itemHeight);
+      let _visibleItemCount = this.get('_visibleItemCount');
+      let maxPadding = Math.max(0, totalHeight - (_visibleItemCount * itemHeight) + itemHeight);
 
       return Math.min(maxPadding, padding);
     }
   }),
 
-  contentHeight: computed('_totalHeight', 'paddingTop', {
+  _contentHeight: computed('_totalHeight', '_paddingTop', {
     get() {
-      return this.get('_totalHeight') - this.get('paddingTop');
+      return this.get('_totalHeight') - this.get('_paddingTop');
     }
   }),
 
@@ -142,7 +143,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   scrollTo(positionIndex) {
     let sanitizedIndex = Math.min(
       Math.max(positionIndex, 0),
-      (this.get('_items.length') - this.get('visibleItemCount'))
+      (this.get('_items.length') - this.get('_visibleItemCount'))
     );
 
     this.calculateVisibleItems(sanitizedIndex);
@@ -153,11 +154,14 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     this._super(...arguments);
 
     let items = Ember.A(this.getAttr('items'));
-    this.set('_items', items);
-    this.set('_totalHeight', Math.max(items.length * this.getAttr('itemHeight'), 0));
+
+    this.setProperties({
+      _items: items,
+      _totalHeight: Math.max(items.length * this.getAttr('itemHeight'), 0)
+    });
 
     if (attrs.newAttrs.hasOwnProperty('items') || attrs.newAttrs.hasOwnProperty('positionIndex')) {
-      Ember.run.scheduleOnce('afterRender', () => {
+      emberRun.scheduleOnce('afterRender', () => {
         this.scrollTo(this.getAttr('positionIndex'));
       });
     }
