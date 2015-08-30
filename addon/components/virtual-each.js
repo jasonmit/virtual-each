@@ -67,10 +67,10 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
 
   contentStyle: computed('_paddingTop', '_contentHeight', {
     get() {
-      let _paddingTop = Handlebars.Utils.escapeExpression(this.get('_paddingTop'));
-      let height = Handlebars.Utils.escapeExpression(this.get('_contentHeight'));
+      let _safePaddingTop = Handlebars.Utils.escapeExpression(this.get('_paddingTop'));
+      let _safeContentHeight = Handlebars.Utils.escapeExpression(this.get('_contentHeight'));
 
-      return new SafeString(`height: ${height}px; padding-top: ${_paddingTop}px;`);
+      return new SafeString(`height: ${_safeContentHeight}px; padding-top: ${_safePaddingTop}px;`);
     }
   }),
 
