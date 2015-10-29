@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import computed from 'ember-new-computed';
 
 const { Controller, run:emberRun } = Ember;
 
@@ -40,12 +39,12 @@ export default Controller.extend({
   scrollTimeout: null,
   selected: 'people',
 
-  componentName: computed('selected', {
+  componentName: Ember.computed('selected', {
     get() {
       return 'x-' + this.get('selected');
     }
   }),
-  currentModel: computed('model', 'selected', {
+  currentModel: Ember.computed('model', 'selected', {
     get() {
       return this.get('model')[this.get('selected')];
     }
