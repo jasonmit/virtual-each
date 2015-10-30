@@ -187,8 +187,30 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
           let halfItemHeight = 0.5 * 35;
           expect($component.scrollTop()).to.be.closeTo(expectedScrollTop, halfItemHeight);
         });
+
+        describe("persisting the positionIndex", function() {
+          beforeEach(function() {
+            this.set('positionIndex', undefined);
+          });
+
+          it("persists the current index", function() {
+            var $component = this.$('.virtual-each');
+            expect($component.find('li').last().text()).to.contain('actual 199');
+          });
+
+          describe("updating items", function() {
+            beforeEach(function() {
+              let newItems = this.get('items').map((value, index)=> { return "newItem ".concat(index); });
+              this.set('items', newItems);
+            });
+
+            it("persists the current index", function() {
+              var $component = this.$('.virtual-each');
+              expect($component.find('li').last().text()).to.contain('actual 199');
+            });
+          });
+        });
       });
     });
-
   });
 });
