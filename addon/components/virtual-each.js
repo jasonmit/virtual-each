@@ -145,10 +145,12 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     let totalHeight = this.get('_totalHeight');
     let _visibleItemCount = this.get('_visibleItemCount');
 
+    let startingIndex = Math.max(positionIndex, 0) || this.get('_startAt');
+
     let maxVisibleItemTop = Math.max(0, (this.get('_items.length') - _visibleItemCount + EXTRA_ROW_PADDING));
     let maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
 
-    let sanitizedIndex = Math.min( Math.max(positionIndex, 0), maxVisibleItemTop);
+    let sanitizedIndex = Math.min( startingIndex, maxVisibleItemTop);
     let sanitizedPadding = (sanitizedIndex === maxVisibleItemTop) ? maxPadding : itemHeight * sanitizedIndex;
 
     this.calculateVisibleItems(sanitizedIndex);
