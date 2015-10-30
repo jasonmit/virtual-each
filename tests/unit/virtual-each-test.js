@@ -114,6 +114,23 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
           expect($component.find('li').first().text()).to.contain('Item 1');
         });
       });
+    });
+    describe("positioning", function() {
+      beforeEach(function() {
+        this.set('positionIndex', 0);
+      });
+
+      it("shows visible items in the panel", function() {
+        var visibleItems = this.$component.find('li');
+        var expectedLength = Math.ceil(500/35 + EXTRA_ROW_PADDING);
+        expect(visibleItems.length).to.equal(expectedLength);
+      });
+
+      it("first item is item 0", function () {
+        var $component = this.$('.virtual-each');
+        expect($component.find('li').first().text()).to.contain('Item 0');
+      });
+
       describe("positioning to the second item", function() {
         beforeEach(function() {
           run(() => {

@@ -110,7 +110,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
       let totalHeight = this.get('_totalHeight');
       let padding = this.get('_startAt') * itemHeight;
       let _visibleItemCount = this.get('_visibleItemCount');
-      let maxPadding = Math.max(0, totalHeight - (_visibleItemCount * itemHeight) + itemHeight);
+      let maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
 
       return Math.min(maxPadding, padding);
     }
@@ -141,13 +141,19 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   },
 
   scrollTo(positionIndex) {
-    let sanitizedIndex = Math.min(
-      Math.max(positionIndex, 0),
-      (this.get('_items.length') - this.get('_visibleItemCount'))
-    );
+    let itemHeight = this.getAttr('itemHeight');
+    let totalHeight = this.get('_totalHeight');
+    let _visibleItemCount = this.get('_visibleItemCount');
+
+    let maxVisibleItemTop = Math.max(0, (this.get('_items.length') - _visibleItemCount + EXTRA_ROW_PADDING));
+    let maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
+
+    let sanitizedIndex = Math.min( Math.max(positionIndex, 0), maxVisibleItemTop);
+    let sanitizedPadding = (sanitizedIndex === maxVisibleItemTop) ? maxPadding : itemHeight * sanitizedIndex;
 
     this.calculateVisibleItems(sanitizedIndex);
-    this.$().scrollTop(sanitizedIndex * this.getAttr('itemHeight'));
+    this.$().scrollTop(sanitizedPadding);
+
   },
 
   didReceiveAttrs(attrs) {
