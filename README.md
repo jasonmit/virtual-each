@@ -28,7 +28,7 @@ If you want a more flexible virtualization component, please try [ember-collecti
     </div>
   </div>
 {{else}}
- <strong>No results</strong>
+  <strong>No results</strong>
 {{/virtual-each}}
 ```
 
