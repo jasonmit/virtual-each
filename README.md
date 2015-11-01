@@ -27,6 +27,8 @@ If you want a more flexible virtualization component, please try [ember-collecti
       <div class="company">{{item.company}}</div>
     </div>
   </div>
+{{else}}
+ <strong>No results</strong>
 {{/virtual-each}}
 ```
 
