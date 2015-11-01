@@ -1,5 +1,11 @@
 <ul class="infinite-list-content" style={{contentStyle}}>
 {{#each _visibleItems key='@index' as |item|}}
-  <li class="virtual-item">{{yield item.raw item.actualIndex item.virtualIndex}}</li>
+  <li class="virtual-item">
+    {{yield item.raw item.actualIndex item.virtualIndex}}
+  </li>
+{{else}}
+  <li>
+    {{yield to='inverse'}}
+  </li>
 {{/each}}
 </ul>
