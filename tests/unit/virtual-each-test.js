@@ -50,6 +50,7 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
     });
 
     it("renders the else", function() {
+      expect($('.virtual-list-empty').length).to.equal(1);
       expect($('.spec-no-data').text().trim()).to.equal('You have no data!');
     });
 
