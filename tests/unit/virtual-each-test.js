@@ -29,6 +29,33 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
     expect($component.hasClass('virtual-each')).to.be.true;
   });
 
+  describe("with empty content", function() {
+    beforeEach(function() {
+      var items = new Array(0);
+
+      this.set('items', items);
+      this.render(hbs`
+        {{#virtual-each
+          items=items
+          positionIndex=positionIndex
+          height=500
+          itemHeight=35
+        as |item actualIndex virtualIndex|}}
+        <div style='height: 35px;'>{{item}} - actual {{actualIndex}} - virtual {{virtualIndex}}</div>
+        {{else}}
+        <div class="spec-no-data">You have no data!</div>
+        {{/virtual-each}}
+      `);
+      this.$component = this.$('.virtual-each');
+    });
+
+    it("renders the else", function() {
+      expect($('.spec-no-data').text().trim()).to.equal('You have no data!');
+    });
+
+  });
+
+
   describe("passing attributes", function() {
 
     beforeEach(function() {
