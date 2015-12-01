@@ -6,7 +6,8 @@ import layout from '../templates/components/virtual-each';
 const {
   Component,
   Handlebars,
-  run:emberRun
+  run:emberRun,
+  computed
 } = Ember;
 
 const { SafeString } = Handlebars;
@@ -56,7 +57,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   },
 
-  style: Ember.computed('height', {
+  style: computed('height', {
     get() {
       let height = Handlebars.Utils.escapeExpression(this.getAttr('height'));
 
@@ -64,16 +65,16 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   }),
 
-  contentStyle: Ember.computed('_paddingTop', '_contentHeight', {
+  contentStyle: computed('_paddingTop', '_contentHeight', {
     get() {
       let _safePaddingTop = Handlebars.Utils.escapeExpression(this.get('_paddingTop'));
       let _safeContentHeight = Handlebars.Utils.escapeExpression(this.get('_contentHeight'));
 
       return new SafeString(`height: ${_safeContentHeight}px; padding-top: ${_safePaddingTop}px;`);
     }
-  }),
+  }).readOnly(),
 
-  _visibleItems: Ember.computed('_startAt', '_visibleItemCount', '_items', {
+  _visibleItems: computed('_startAt', '_visibleItemCount', '_items', {
     get() {
       let items = this.get('_items');
       let startAt = this.get('_startAt');
@@ -93,17 +94,17 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
         };
       });
     }
-  }),
+  }).readOnly(),
 
-  _visibleItemCount: Ember.computed('attrs.height', 'attrs.itemHeight', {
+  _visibleItemCount: computed('attrs.height', 'attrs.itemHeight', {
     get() {
       let height = this.getAttr('height');
 
       return Math.ceil(height / this.getAttr('itemHeight')) + EXTRA_ROW_PADDING;
     }
-  }),
+  }).readOnly(),
 
-  _paddingTop: Ember.computed('_totalHeight', '_startAt', '_visibleItemCount', 'attrs.itemHeight', {
+  _paddingTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'attrs.itemHeight', {
     get() {
       let itemHeight = this.getAttr('itemHeight');
       let totalHeight = this.get('_totalHeight');
@@ -113,13 +114,13 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
 
       return Math.min(maxPadding, padding);
     }
-  }),
+  }).readOnly(),
 
-  _contentHeight: Ember.computed('_totalHeight', '_paddingTop', {
+  _contentHeight: computed('_totalHeight', '_paddingTop', {
     get() {
       return this.get('_totalHeight') - this.get('_paddingTop');
     }
-  }),
+  }).readOnly(),
 
   calculateVisibleItems(positionIndex) {
     emberRun(() => {
