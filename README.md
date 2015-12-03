@@ -42,9 +42,6 @@ Add the following CSS snippet to `styles/app.css`:
 }
 
 .infinite-list-content {
-  box-sizing: initial;
-  -moz-box-sizing: initial;
-  -webkit-box-sizing: initial;
   list-style: none;
   margin: 0;
   padding: 0;
