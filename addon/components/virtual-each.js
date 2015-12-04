@@ -65,12 +65,12 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   }),
 
-  contentStyle: computed('_paddingTop', '_contentHeight', {
+  contentStyle: computed('_marginTop', '_contentHeight', {
     get() {
-      let _safePaddingTop = Handlebars.Utils.escapeExpression(this.get('_paddingTop'));
+      let _safeMarginTop = Handlebars.Utils.escapeExpression(this.get('_marginTop'));
       let _safeContentHeight = Handlebars.Utils.escapeExpression(this.get('_contentHeight'));
 
-      return new SafeString(`height: ${_safeContentHeight}px; padding-top: ${_safePaddingTop}px;`);
+      return new SafeString(`height: ${_safeContentHeight}px; margin-top: ${_safeMarginTop}px;`);
     }
   }).readOnly(),
 
@@ -104,21 +104,21 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   }).readOnly(),
 
-  _paddingTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'attrs.itemHeight', {
+  _marginTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'attrs.itemHeight', {
     get() {
       let itemHeight = this.getAttr('itemHeight');
       let totalHeight = this.get('_totalHeight');
-      let padding = this.get('_startAt') * itemHeight;
+      let margin = this.get('_startAt') * itemHeight;
       let _visibleItemCount = this.get('_visibleItemCount');
-      let maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
+      let maxMargin = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
 
-      return Math.min(maxPadding, padding);
+      return Math.min(maxMargin, margin);
     }
   }).readOnly(),
 
-  _contentHeight: computed('_totalHeight', '_paddingTop', {
+  _contentHeight: computed('_totalHeight', '_marginTop', {
     get() {
-      return this.get('_totalHeight') - this.get('_paddingTop');
+      return this.get('_totalHeight') - this.get('_marginTop');
     }
   }).readOnly(),
 
