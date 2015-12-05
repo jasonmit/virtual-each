@@ -13,7 +13,7 @@ const {
 const { SafeString } = Handlebars;
 const EXTRA_ROW_PADDING = 1;
 
-export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
+const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   layout,
   classNames: ['virtual-each'],
   attributeBindings: ['style'],
@@ -27,7 +27,7 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     scrollTimeout: 30,
     height: 200,
     itemHeight: 20,
-    items: Ember.A()
+    x: Ember.A()
   },
 
   eventHandlers: {
@@ -175,3 +175,9 @@ export default Component.extend(EventListenerMixin, DefaultAttrsMixin, {
     }
   }
 });
+
+VirtualEachComponent.reopenClass({
+  positionalParams: ['items']
+});
+
+export default VirtualEachComponent;

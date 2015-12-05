@@ -29,6 +29,41 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
     expect($component.hasClass('virtual-each')).to.be.true;
   });
 
+  describe("positional param", function() {
+    it("it sets items", function() {
+      const items = new Array(200).fill(0).map((value, index)=> {
+        return "Item ".concat(index);
+      });
+
+      const height = 500;
+      const itemHeight = 35;
+      const expectedLength = Math.ceil(height/itemHeight + EXTRA_ROW_PADDING);
+
+      this.setProperties({
+        items,
+        height,
+        itemHeight
+      });
+
+      this.render(hbs`
+        {{#virtual-each
+          items
+          positionIndex=positionIndex
+          height=height
+          itemHeight=itemHeight
+        as |item actualIndex virtualIndex|}}
+          <div style='height: 35px;'>
+            {{item}} - actual {{actualIndex}} - virtual {{virtualIndex}}
+          </div>
+        {{else}}
+          <div class="spec-no-data">You have no data!</div>
+        {{/virtual-each}}
+      `);
+
+      expect(this.$('.virtual-each ul li').length, expectedLength);
+    });
+  });
+
   describe("with empty content", function() {
     beforeEach(function() {
       var items = new Array(0);
@@ -53,15 +88,16 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
       expect($('.virtual-list-empty').length).to.equal(1);
       expect($('.spec-no-data').text().trim()).to.equal('You have no data!');
     });
-
   });
 
-
   describe("passing attributes", function() {
-
     beforeEach(function() {
-      var items = new Array(200).fill(0).map((value, index)=> { return "Item ".concat(index); });
+      var items = new Array(200).fill(0).map((value, index)=> {
+        return "Item ".concat(index);
+      });
+
       this.set('items', items);
+
       this.render(hbs`
         {{#virtual-each
           items=items
@@ -69,9 +105,10 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
           height=500
           itemHeight=35
         as |item actualIndex virtualIndex|}}
-        <div style='height: 35px;'>{{item}} - actual {{actualIndex}} - virtual {{virtualIndex}}</div>
+          <div style='height: 35px;'>{{item}} - actual {{actualIndex}} - virtual {{virtualIndex}}</div>
         {{/virtual-each}}
       `);
+
       this.$component = this.$('.virtual-each');
     });
 
@@ -143,6 +180,7 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
         });
       });
     });
+
     describe("positioning", function() {
       beforeEach(function() {
         this.set('positionIndex', 0);
@@ -194,6 +232,7 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
           expect($component.scrollTop()).to.be.closeTo(expectedScrollTop, halfItemHeight);
         });
       });
+
       describe("positioning past the last item in list", function() {
         beforeEach(function() {
           run(() => {
