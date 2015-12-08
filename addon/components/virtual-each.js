@@ -7,7 +7,8 @@ const {
   Component,
   Handlebars,
   run:emberRun,
-  computed
+  computed,
+  RSVP
 } = Ember;
 
 const { SafeString } = Handlebars;
@@ -122,6 +123,14 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     }
   }).readOnly(),
 
+  init() {
+    this._super(...arguments);
+
+    this.setProperties({
+      _items: Ember.A()
+    });
+  },
+
   calculateVisibleItems(positionIndex) {
     emberRun(() => {
       let startAt = this.get('_startAt');
@@ -155,24 +164,25 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
     this.calculateVisibleItems(sanitizedIndex);
     this.$().scrollTop(sanitizedPadding);
-
   },
 
   didReceiveAttrs(attrs) {
     this._super(...arguments);
 
-    let items = Ember.A(this.getAttr('items'));
+    RSVP.cast(this.getAttr('items')).then((attrItems) => {
+      let items = Ember.A(attrItems);
 
-    this.setProperties({
-      _items: items,
-      _totalHeight: Math.max(items.length * this.getAttr('itemHeight'), 0)
-    });
-
-    if (attrs.newAttrs.hasOwnProperty('items') || attrs.newAttrs.hasOwnProperty('positionIndex')) {
-      emberRun.scheduleOnce('afterRender', () => {
-        this.scrollTo(this.getAttr('positionIndex'));
+      this.setProperties({
+        _items: items,
+        _totalHeight: Math.max(items.length * this.getAttr('itemHeight'), 0)
       });
-    }
+
+      if (attrs.newAttrs.hasOwnProperty('items') || attrs.newAttrs.hasOwnProperty('positionIndex')) {
+        emberRun.scheduleOnce('afterRender', () => {
+          this.scrollTo(this.getAttr('positionIndex'));
+        });
+      }
+    });
   }
 });
 
