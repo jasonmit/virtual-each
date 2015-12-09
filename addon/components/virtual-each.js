@@ -8,6 +8,7 @@ const {
   Handlebars,
   run:emberRun,
   computed,
+  get,
   RSVP
 } = Ember;
 
@@ -60,7 +61,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   style: computed('height', {
     get() {
-      let height = Handlebars.Utils.escapeExpression(this.getAttr('height'));
+      const height = Handlebars.Utils.escapeExpression(this.getAttr('height'));
 
       return new SafeString(`height: ${height}px;`);
     }
@@ -68,8 +69,8 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   contentStyle: computed('_marginTop', '_contentHeight', {
     get() {
-      let _safeMarginTop = Handlebars.Utils.escapeExpression(this.get('_marginTop'));
-      let _safeContentHeight = Handlebars.Utils.escapeExpression(this.get('_contentHeight'));
+      const _safeMarginTop = Handlebars.Utils.escapeExpression(get(this, '_marginTop'));
+      const _safeContentHeight = Handlebars.Utils.escapeExpression(get(this, '_contentHeight'));
 
       return new SafeString(`height: ${_safeContentHeight}px; margin-top: ${_safeMarginTop}px;`);
     }
@@ -77,13 +78,14 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   _visibleItems: computed('_startAt', '_visibleItemCount', '_items', {
     get() {
-      let items = this.get('_items');
-      let startAt = this.get('_startAt');
-      let _visibleItemCount = this.get('_visibleItemCount');
-      let endAt = Math.min(items.length, startAt + _visibleItemCount);
-      let onScrollBottomed = this.attrs.onScrollBottomed;
+      const items = get(this, '_items');
+      const startAt = get(this, '_startAt');
+      const _visibleItemCount = get(this, '_visibleItemCount');
+      const itemsLength = get(items, 'length');
+      const endAt = Math.min(itemsLength, startAt + _visibleItemCount);
+      const onScrollBottomed = this.attrs.onScrollBottomed;
 
-      if (typeof onScrollBottomed === 'function' && (startAt + _visibleItemCount - EXTRA_ROW_PADDING) >= items.length) {
+      if (typeof onScrollBottomed === 'function' && (startAt + _visibleItemCount - EXTRA_ROW_PADDING) >= itemsLength) {
         onScrollBottomed(startAt, endAt);
       }
 
@@ -99,7 +101,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   _visibleItemCount: computed('attrs.height', 'attrs.itemHeight', {
     get() {
-      let height = this.getAttr('height');
+      const height = this.getAttr('height');
 
       return Math.ceil(height / this.getAttr('itemHeight')) + EXTRA_ROW_PADDING;
     }
@@ -107,11 +109,11 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   _marginTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'attrs.itemHeight', {
     get() {
-      let itemHeight = this.getAttr('itemHeight');
-      let totalHeight = this.get('_totalHeight');
-      let margin = this.get('_startAt') * itemHeight;
-      let _visibleItemCount = this.get('_visibleItemCount');
-      let maxMargin = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
+      const itemHeight = this.getAttr('itemHeight');
+      const totalHeight = get(this, '_totalHeight');
+      const margin = get(this, '_startAt') * itemHeight;
+      const _visibleItemCount = get(this, '_visibleItemCount');
+      const maxMargin = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
 
       return Math.min(maxMargin, margin);
     }
@@ -119,7 +121,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   _contentHeight: computed('_totalHeight', '_marginTop', {
     get() {
-      return this.get('_totalHeight') - this.get('_marginTop');
+      return get(this, '_totalHeight') - get(this, '_marginTop');
     }
   }).readOnly(),
 
@@ -133,9 +135,9 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   calculateVisibleItems(positionIndex) {
     emberRun(() => {
-      let startAt = this.get('_startAt');
-      let scrolledAmount = this.$().scrollTop();
-      let visibleStart = positionIndex || Math.floor(scrolledAmount / this.getAttr('itemHeight'));
+      const startAt = get(this, '_startAt');
+      const scrolledAmount = this.$().scrollTop();
+      const visibleStart = positionIndex || Math.floor(scrolledAmount / this.getAttr('itemHeight'));
 
       if (visibleStart !== startAt) {
         this.set('_startAt', visibleStart);
@@ -150,17 +152,17 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   },
 
   scrollTo(positionIndex) {
-    let itemHeight = this.getAttr('itemHeight');
-    let totalHeight = this.get('_totalHeight');
-    let _visibleItemCount = this.get('_visibleItemCount');
+    const itemHeight = this.getAttr('itemHeight');
+    const totalHeight = get(this, '_totalHeight');
+    const _visibleItemCount = get(this, '_visibleItemCount');
 
-    let startingIndex = Math.max(positionIndex, 0) || this.get('_startAt');
+    const startingIndex = Math.max(positionIndex, 0) || get(this, '_startAt');
 
-    let maxVisibleItemTop = Math.max(0, (this.get('_items.length') - _visibleItemCount + EXTRA_ROW_PADDING));
-    let maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
+    const maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + EXTRA_ROW_PADDING));
+    const maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
 
-    let sanitizedIndex = Math.min( startingIndex, maxVisibleItemTop);
-    let sanitizedPadding = (sanitizedIndex === maxVisibleItemTop) ? maxPadding : itemHeight * sanitizedIndex;
+    const sanitizedIndex = Math.min( startingIndex, maxVisibleItemTop);
+    const sanitizedPadding = (sanitizedIndex === maxVisibleItemTop) ? maxPadding : itemHeight * sanitizedIndex;
 
     this.calculateVisibleItems(sanitizedIndex);
     this.$().scrollTop(sanitizedPadding);
@@ -170,11 +172,11 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     this._super(...arguments);
 
     RSVP.cast(this.getAttr('items')).then((attrItems) => {
-      let items = Ember.A(attrItems);
+      const items = Ember.A(attrItems);
 
       this.setProperties({
         _items: items,
-        _totalHeight: Math.max(items.length * this.getAttr('itemHeight'), 0)
+        _totalHeight: Math.max(get(items, 'length') * this.getAttr('itemHeight'), 0)
       });
 
       if (attrs.newAttrs.hasOwnProperty('items') || attrs.newAttrs.hasOwnProperty('positionIndex')) {
