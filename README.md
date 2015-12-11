@@ -10,6 +10,10 @@ This component will only ever render DOM nodes for what can fill the view port. 
 
 If you want a more flexible virtualization component, please try [ember-collection](https://github.com/emberjs/ember-collection).
 
+## Install
+
+`ember install virtual-each`
+
 ## Usage
 
 ```hbs
@@ -56,22 +60,17 @@ Add the following CSS snippet to `styles/app.css`:
 
 * Ember >= 1.13.0
 
-## Installation
+## Contributing
+
+### Install
 
 * `git clone` this repository
 * `npm install`
 * `bower install`
-
-## Running
-
 * `ember server`
 * Visit your app at http://localhost:4200.
 
-## Running Tests
+### Running Tests
 
 * `ember test`
 * `ember test --server`
-
-## Building
-
-* `ember build`
