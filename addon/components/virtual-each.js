@@ -10,7 +10,8 @@ const {
   computed,
   get,
   set,
-  RSVP
+  RSVP,
+  A:emberArray
 } = Ember;
 
 const { SafeString } = Handlebars;
@@ -21,16 +22,11 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   classNames: ['virtual-each'],
   attributeBindings: ['style'],
 
-  _totalHeight: 0,
-  _startAt: 0,
-  _scrolledByWheel: false,
-
   defaultAttrs: {
     positionIndex: 0,
     scrollTimeout: 30,
     height: 200,
-    itemHeight: 20,
-    x: Ember.A()
+    itemHeight: 20
   },
 
   eventHandlers: {
@@ -60,7 +56,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     }
   },
 
-  style: computed('height', {
+  style: computed('attrs.height', {
     get() {
       const height = Handlebars.Utils.escapeExpression(this.getAttr('height'));
 
@@ -70,14 +66,14 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   contentStyle: computed('_marginTop', '_contentHeight', {
     get() {
-      const _safeMarginTop = Handlebars.Utils.escapeExpression(get(this, '_marginTop'));
-      const _safeContentHeight = Handlebars.Utils.escapeExpression(get(this, '_contentHeight'));
+      const marginTop = Handlebars.Utils.escapeExpression(get(this, '_marginTop'));
+      const height = Handlebars.Utils.escapeExpression(get(this, '_contentHeight'));
 
-      return new SafeString(`height: ${_safeContentHeight}px; margin-top: ${_safeMarginTop}px;`);
+      return new SafeString(`height: ${height}px; margin-top: ${marginTop}px;`);
     }
   }).readOnly(),
 
-  _visibleItems: computed('_startAt', '_visibleItemCount', '_items', {
+  visibleItems: computed('_startAt', '_visibleItemCount', '_items', {
     get() {
       const items = get(this, '_items');
       const startAt = get(this, '_startAt');
@@ -113,8 +109,8 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
       const itemHeight = this.getAttr('itemHeight');
       const totalHeight = get(this, '_totalHeight');
       const margin = get(this, '_startAt') * itemHeight;
-      const _visibleItemCount = get(this, '_visibleItemCount');
-      const maxMargin = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
+      const visibleItemCount = get(this, '_visibleItemCount');
+      const maxMargin = Math.max(0, totalHeight - ((visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
 
       return Math.min(maxMargin, margin);
     }
@@ -130,14 +126,19 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     this._super(...arguments);
 
     this.setProperties({
-      _items: Ember.A()
+      _items: emberArray(),
+      _startAt: 0,
+      _totalHeight: 0,
+      _scrolledByWheel: false
     });
   },
-  
+
   didInsertElement() {
     this._super(...arguments);
 
-    this.isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
+    const { userAgent:ua } = navigator || {};
+
+    this.isWebkit = /WebKit/.test(ua);
   },
 
   calculateVisibleItems(positionIndex) {
@@ -156,12 +157,9 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     const itemHeight = this.getAttr('itemHeight');
     const totalHeight = get(this, '_totalHeight');
     const _visibleItemCount = get(this, '_visibleItemCount');
-
     const startingIndex = Math.max(positionIndex, 0) || get(this, '_startAt');
-
     const maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + EXTRA_ROW_PADDING));
     const maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
-
     const sanitizedIndex = Math.min( startingIndex, maxVisibleItemTop);
     const sanitizedPadding = (sanitizedIndex === maxVisibleItemTop) ? maxPadding : itemHeight * sanitizedIndex;
 
@@ -173,7 +171,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     this._super(...arguments);
 
     RSVP.cast(this.getAttr('items')).then((attrItems) => {
-      const items = Ember.A(attrItems);
+      const items = emberArray(attrItems);
 
       this.setProperties({
         _items: items,

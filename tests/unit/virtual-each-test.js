@@ -66,9 +66,10 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
 
   describe("with empty content", function() {
     beforeEach(function() {
-      var items = new Array(0);
+      const items = new Array(0);
 
       this.set('items', items);
+
       this.render(hbs`
         {{#virtual-each
           items=items
@@ -92,7 +93,7 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
 
   describe("passing attributes", function() {
     beforeEach(function() {
-      var items = new Array(200).fill(0).map((value, index)=> {
+      const items = new Array(200).fill(0).map((value, index)=> {
         return "Item ".concat(index);
       });
 
