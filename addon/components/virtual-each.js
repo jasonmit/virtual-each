@@ -9,6 +9,7 @@ const {
   run:emberRun,
   computed,
   get,
+  set,
   RSVP
 } = Ember;
 
@@ -40,7 +41,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     scroll(e) {
       e.preventDefault();
 
-      let scrollTimeout = this.getAttr('scrollTimeout');
+      const scrollTimeout = this.getAttr('scrollTimeout');
 
       if (scrollTimeout && this.isWebkit && this._scrolledByWheel) {
         this._scrolledByWheel = false;
@@ -65,7 +66,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
       return new SafeString(`height: ${height}px;`);
     }
-  }),
+  }).readOnly(),
 
   contentStyle: computed('_marginTop', '_contentHeight', {
     get() {
@@ -132,6 +133,12 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
       _items: Ember.A()
     });
   },
+  
+  didInsertElement() {
+    this._super(...arguments);
+
+    this.isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
+  },
 
   calculateVisibleItems(positionIndex) {
     emberRun(() => {
@@ -140,15 +147,9 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
       const visibleStart = positionIndex || Math.floor(scrolledAmount / this.getAttr('itemHeight'));
 
       if (visibleStart !== startAt) {
-        this.set('_startAt', visibleStart);
+        set(this, '_startAt', visibleStart);
       }
     });
-  },
-
-  didInsertElement() {
-    this._super(...arguments);
-
-    this.isWebkit = /WebKit/.test(navigator && navigator.userAgent || '');
   },
 
   scrollTo(positionIndex) {
