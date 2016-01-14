@@ -1,4 +1,4 @@
-/*global it, xdescribe, beforeEach */
+/*global xdescribe, beforeEach */
 /*jshint -W030 */ // Expected an assignment or function call and instead saw an expression
 import '../test-helper';
 
