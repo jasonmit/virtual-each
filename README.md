@@ -18,10 +18,10 @@ If you want a more flexible virtualization component, please try [ember-collecti
 
 ```hbs
 {{#virtual-each items
-  height=200 // required: total height
-  itemHeight=36 // required: row height
-  onScrollBottomed=(action 'handlePageBottom') // optional: invoked when the scroller hits the bottom
-  positionIndex=0 // optional: used to scroll to a specific item index
+  height=200
+  itemHeight=36
+  onScrollBottomed=(action 'handlePageBottom')
+  positionIndex=0
   as |item actualIndex virtualIndex|
 }}
   <div class="person-row">
@@ -35,6 +35,13 @@ If you want a more flexible virtualization component, please try [ember-collecti
   <strong>No results</strong>
 {{/virtual-each}}
 ```
+
+### Attributes
+
+* `height`: fixed height of the component (required)
+* `itemHeight`: fixed row height (required)
+* `onScrollBottomed`: invoked when scrolled to the bottom of the list (optional)
+* `positionIndex`: start at or scroll to a specific item based on the item index (optional)
 
 ## CSS
 
