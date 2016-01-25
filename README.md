@@ -1,4 +1,6 @@
 # virtual-each
+[![Ember Observer Score](http://emberobserver.com/badges/virtual-each.svg)](http://emberobserver.com/addons/virtual-each)
+[![Ember badge][ember-badge]][embadge]
 ![NPM Version](https://img.shields.io/npm/v/virtual-each.svg)
 [![Build Status](https://travis-ci.org/jasonmit/virtual-each.svg?branch=master)](https://travis-ci.org/jasonmit/virtual-each)
 [![Dependency Status](https://david-dm.org/jasonmit/virtual-each.svg)](https://david-dm.org/jasonmit/virtual-each)
@@ -81,3 +83,6 @@ Add the following CSS snippet to `styles/app.css`:
 
 * `ember test`
 * `ember test --server`
+
+[embadge]: http://embadge.io/
+[ember-badge]: http://embadge.io/v1/badge.svg?start=1.13.0
