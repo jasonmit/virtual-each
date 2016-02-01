@@ -211,6 +211,20 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
         });
       });
 
+      describe("re-positioning to the first item", function() {
+        beforeEach(function() {
+          run(() => {
+            this.set('positionIndex', 10);
+            this.set('positionIndex', 0);
+          });
+        });
+
+        it("rerenders with the first item at the top", function() {
+          var $component = this.$('.virtual-each');
+          expect($component.find('li').first().text()).to.contain('Item 0');
+        });
+      });
+
       describe("positioning to the last item in list", function() {
         beforeEach(function() {
           run(() => {
