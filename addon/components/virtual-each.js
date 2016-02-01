@@ -144,7 +144,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     emberRun(() => {
       const startAt = get(this, '_startAt');
       const scrolledAmount = this.$().scrollTop();
-      const visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : positionIndex;
+      const visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : Math.max(positionIndex);
 
       if (visibleStart !== startAt) {
         set(this, '_startAt', visibleStart);
