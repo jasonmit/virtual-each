@@ -23,7 +23,6 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   attributeBindings: ['style'],
 
   defaultAttrs: {
-    positionIndex: 0,
     scrollTimeout: 30,
     height: 200,
     itemHeight: 20
@@ -145,7 +144,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     emberRun(() => {
       const startAt = get(this, '_startAt');
       const scrolledAmount = this.$().scrollTop();
-      const visibleStart = positionIndex || Math.floor(scrolledAmount / this.getAttr('itemHeight'));
+      const visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : positionIndex;
 
       if (visibleStart !== startAt) {
         set(this, '_startAt', visibleStart);
@@ -157,7 +156,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     const itemHeight = this.getAttr('itemHeight');
     const totalHeight = get(this, '_totalHeight');
     const _visibleItemCount = get(this, '_visibleItemCount');
-    const startingIndex = Math.max(positionIndex, 0) || get(this, '_startAt');
+    const startingIndex = isNaN(positionIndex) ? get(this, '_startAt') : Math.max(positionIndex, 0);
     const maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + EXTRA_ROW_PADDING));
     const maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
     const sanitizedIndex = Math.min( startingIndex, maxVisibleItemTop);
