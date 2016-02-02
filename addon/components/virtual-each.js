@@ -157,10 +157,11 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     const totalHeight = get(this, '_totalHeight');
     const _visibleItemCount = get(this, '_visibleItemCount');
     const startingIndex = isNaN(positionIndex) ? get(this, '_startAt') : Math.max(positionIndex, 0);
+    const startingPadding = itemHeight * startingIndex;
     const maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + EXTRA_ROW_PADDING));
     const maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
-    const sanitizedIndex = Math.min( startingIndex, maxVisibleItemTop);
-    const sanitizedPadding = (sanitizedIndex === maxVisibleItemTop) ? maxPadding : itemHeight * sanitizedIndex;
+    const sanitizedIndex = Math.min(startingIndex, maxVisibleItemTop);
+    const sanitizedPadding = (startingPadding > maxPadding) ? maxPadding : startingPadding;
 
     this.calculateVisibleItems(sanitizedIndex);
     this.$().scrollTop(sanitizedPadding);
