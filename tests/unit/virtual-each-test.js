@@ -225,6 +225,21 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
         });
       });
 
+      describe("positioning where the last item is in view", function() {
+        beforeEach(function() {
+          run(() => {
+            this.set('positionIndex', 185);
+          });
+        });
+
+        it("sets the scrollTop such that the first item shown is not cutoff", function() {
+          var $component = this.$('.virtual-each');
+          let firstVisibleItem = 185;
+          let itemHeight = 35;
+          expect($component.scrollTop()).to.be.closeTo(firstVisibleItem * itemHeight, 1);
+        });
+      });
+
       describe("positioning to the last item in list", function() {
         beforeEach(function() {
           run(() => {
