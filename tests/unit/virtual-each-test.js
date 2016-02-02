@@ -13,6 +13,7 @@ import hbs from 'htmlbars-inline-precompile';
 
 const { run } = Ember;
 const EXTRA_ROW_PADDING = 1;
+const SCROLL_TOP_BUFFER = 2;
 
 describeComponent('virtual-each', 'VirtualEachComponent', {
   // specify the other units that are required for this test
@@ -236,7 +237,8 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
           var $component = this.$('.virtual-each');
           let firstVisibleItem = 185;
           let itemHeight = 35;
-          expect($component.scrollTop()).to.be.closeTo(firstVisibleItem * itemHeight, 1);
+          let expectedScrollTop = firstVisibleItem * itemHeight;
+          expect($component.scrollTop()).to.be.closeTo(expectedScrollTop, SCROLL_TOP_BUFFER);
         });
       });
 
@@ -258,8 +260,7 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
           let virtualHeight = 500;
 
           let expectedScrollTop = totalHeight - virtualHeight;
-          let halfItemHeight = 0.5 * 35;
-          expect($component.scrollTop()).to.be.closeTo(expectedScrollTop, halfItemHeight);
+          expect($component.scrollTop()).to.be.closeTo(expectedScrollTop, SCROLL_TOP_BUFFER);
         });
       });
 
@@ -281,8 +282,7 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
           let virtualHeight = 500;
 
           let expectedScrollTop = totalHeight - virtualHeight;
-          let halfItemHeight = 0.5 * 35;
-          expect($component.scrollTop()).to.be.closeTo(expectedScrollTop, halfItemHeight);
+          expect($component.scrollTop()).to.be.closeTo(expectedScrollTop, SCROLL_TOP_BUFFER);
         });
 
         describe("persisting the positionIndex", function() {
