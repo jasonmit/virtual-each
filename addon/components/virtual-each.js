@@ -167,6 +167,19 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     this.$().scrollTop(sanitizedPadding);
   },
 
+  positionIndexDidChange(oldAttrs, newAttrs){
+    if(newAttrs && newAttrs.hasOwnProperty('positionIndex')){
+      let newPositionIndex = newAttrs.positionIndex.value;
+      if(oldAttrs && oldAttrs.hasOwnProperty('positionIndex')){
+        let oldPositionIndex = oldAttrs.positionIndex.value;
+        return oldPositionIndex !== newPositionIndex;
+      } else {
+        return true;
+      }
+    }
+    return false;
+  },
+
   didReceiveAttrs(attrs) {
     this._super(...arguments);
 
@@ -178,7 +191,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
         _totalHeight: Math.max(get(items, 'length') * this.getAttr('itemHeight'), 0)
       });
 
-      if (attrs.newAttrs.hasOwnProperty('items') || attrs.newAttrs.hasOwnProperty('positionIndex')) {
+      if(this.positionIndexDidChange(attrs.oldAttrs, attrs.newAttrs)){
         emberRun.scheduleOnce('afterRender', () => {
           this.scrollTo(this.getAttr('positionIndex'));
         });

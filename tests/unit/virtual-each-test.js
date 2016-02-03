@@ -244,23 +244,44 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
 
       describe("positioning to the last item in list", function() {
         beforeEach(function() {
+          let totalHeight = 200*35;
+          let virtualHeight = 500;
+          this.expectedScrollTop = totalHeight - virtualHeight;
           run(() => {
             this.set('positionIndex', 199);
           });
         });
 
-        it("is the last item in the list", function() {
+        it("positions the last item at the bottom of the list", function() {
           var $component = this.$('.virtual-each');
+          expect($component.find('li').first().text()).to.contain('Item 185');
           expect($component.find('li').last().text()).to.contain('Item 199');
         });
 
-        it("sets the scrollTop such that the last item exists is the last visible item", function() {
+        it("sets the scrollTop to the total height less the virtual height", function() {
           var $component = this.$('.virtual-each');
-          let totalHeight = 200*35;
-          let virtualHeight = 500;
+          expect($component.scrollTop()).to.be.closeTo(this.expectedScrollTop, SCROLL_TOP_BUFFER);
+        });
 
-          let expectedScrollTop = totalHeight - virtualHeight;
-          expect($component.scrollTop()).to.be.closeTo(expectedScrollTop, SCROLL_TOP_BUFFER);
+        describe("receiving new items", function() {
+          beforeEach(function() {
+            return run(() => {
+              let items = this.get('items')
+                    .concat(this.get('items'))
+                    .map((value, index)=> { return "Item ".concat(index); });
+              return this.set('items', items);
+            });
+          });
+
+          it("persists the current index", function() {
+            var $component = this.$('.virtual-each');
+            expect($component.find('li').first().text()).to.contain('Item 185');
+          });
+
+          it("persists the scrollTop", function() {
+            var $component = this.$('.virtual-each');
+            expect($component.scrollTop()).to.be.closeTo(this.expectedScrollTop, SCROLL_TOP_BUFFER);
+          });
         });
       });
 
@@ -297,8 +318,10 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
 
           describe("updating items", function() {
             beforeEach(function() {
-              let newItems = this.get('items').map((value, index)=> { return "newItem ".concat(index); });
-              this.set('items', newItems);
+              run(() => {
+                let updatedItems = this.get('items').map((value, index)=> { return "newItem ".concat(index); });
+                this.set('items', updatedItems);
+              });
             });
 
             it("persists the current index", function() {
