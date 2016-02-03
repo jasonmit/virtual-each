@@ -152,7 +152,8 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     });
   },
 
-  scrollTo(positionIndex) {
+  scrollTo: Ember.observer('_positionIndex', function() {
+    const positionIndex = get(this, '_positionIndex');
     const itemHeight = this.getAttr('itemHeight');
     const totalHeight = get(this, '_totalHeight');
     const _visibleItemCount = get(this, '_visibleItemCount');
@@ -163,24 +164,13 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     const sanitizedIndex = Math.min(startingIndex, maxVisibleItemTop);
     const sanitizedPadding = (startingPadding > maxPadding) ? maxPadding : startingPadding;
 
-    this.calculateVisibleItems(sanitizedIndex);
-    this.$().scrollTop(sanitizedPadding);
-  },
+    emberRun.scheduleOnce('afterRender', () => {
+      this.calculateVisibleItems(sanitizedIndex);
+      this.$().scrollTop(sanitizedPadding);
+    });
+  }),
 
-  positionIndexDidChange(oldAttrs, newAttrs){
-    if(newAttrs && newAttrs.hasOwnProperty('positionIndex')){
-      let newPositionIndex = newAttrs.positionIndex.value;
-      if(oldAttrs && oldAttrs.hasOwnProperty('positionIndex')){
-        let oldPositionIndex = oldAttrs.positionIndex.value;
-        return oldPositionIndex !== newPositionIndex;
-      } else {
-        return true;
-      }
-    }
-    return false;
-  },
-
-  didReceiveAttrs(attrs) {
+  didReceiveAttrs() {
     this._super(...arguments);
 
     RSVP.cast(this.getAttr('items')).then((attrItems) => {
@@ -188,14 +178,9 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
       this.setProperties({
         _items: items,
+        _positionIndex: this.getAttr('positionIndex'),
         _totalHeight: Math.max(get(items, 'length') * this.getAttr('itemHeight'), 0)
       });
-
-      if(this.positionIndexDidChange(attrs.oldAttrs, attrs.newAttrs)){
-        emberRun.scheduleOnce('afterRender', () => {
-          this.scrollTo(this.getAttr('positionIndex'));
-        });
-      }
     });
   }
 });
