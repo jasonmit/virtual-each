@@ -152,7 +152,8 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     });
   },
 
-  scrollTo(positionIndex) {
+  scrollTo: Ember.observer('_positionIndex', function() {
+    const positionIndex = get(this, '_positionIndex');
     const itemHeight = this.getAttr('itemHeight');
     const totalHeight = get(this, '_totalHeight');
     const _visibleItemCount = get(this, '_visibleItemCount');
@@ -163,11 +164,13 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     const sanitizedIndex = Math.min(startingIndex, maxVisibleItemTop);
     const sanitizedPadding = (startingPadding > maxPadding) ? maxPadding : startingPadding;
 
-    this.calculateVisibleItems(sanitizedIndex);
-    this.$().scrollTop(sanitizedPadding);
-  },
+    this.scheduledRender = emberRun.scheduleOnce('afterRender', () => {
+      this.calculateVisibleItems(sanitizedIndex);
+      this.$().scrollTop(sanitizedPadding);
+    });
+  }),
 
-  didReceiveAttrs(attrs) {
+  didReceiveAttrs() {
     this._super(...arguments);
 
     RSVP.cast(this.getAttr('items')).then((attrItems) => {
@@ -175,15 +178,15 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
       this.setProperties({
         _items: items,
+        _positionIndex: this.getAttr('positionIndex'),
         _totalHeight: Math.max(get(items, 'length') * this.getAttr('itemHeight'), 0)
       });
-
-      if (attrs.newAttrs.hasOwnProperty('items') || attrs.newAttrs.hasOwnProperty('positionIndex')) {
-        emberRun.scheduleOnce('afterRender', () => {
-          this.scrollTo(this.getAttr('positionIndex'));
-        });
-      }
     });
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+    Ember.run.cancel(this.scheduledRender);
   }
 });
 
