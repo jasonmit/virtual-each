@@ -164,7 +164,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     const sanitizedIndex = Math.min(startingIndex, maxVisibleItemTop);
     const sanitizedPadding = (startingPadding > maxPadding) ? maxPadding : startingPadding;
 
-    emberRun.scheduleOnce('afterRender', () => {
+    this.scheduledRender = emberRun.scheduleOnce('afterRender', () => {
       this.calculateVisibleItems(sanitizedIndex);
       this.$().scrollTop(sanitizedPadding);
     });
@@ -182,6 +182,11 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
         _totalHeight: Math.max(get(items, 'length') * this.getAttr('itemHeight'), 0)
       });
     });
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+    Ember.run.cancel(this.scheduledRender);
   }
 });
 
