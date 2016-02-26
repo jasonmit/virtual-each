@@ -40,6 +40,8 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
+    ENV.locationType = 'hash';
+    ENV.baseURL = '/virtual-each/';
     ENV.baseURL = '/virtual-each';
   }
 
