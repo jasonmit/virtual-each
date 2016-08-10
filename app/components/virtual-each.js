@@ -1,1 +1,1 @@
-export { default } from 'virtual-each/components/virtual-each';
+export { default } from 'virtual-each/components/virtual-each/component';

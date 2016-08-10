@@ -1,21 +1,22 @@
 import Ember from 'ember';
-import EventListenerMixin from '../mixins/event-listener';
-import DefaultAttrsMixin from '../mixins/default-attrs';
-import layout from '../templates/components/virtual-each';
+import EventListenerMixin from '../../mixins/event-listener';
+import DefaultAttrsMixin from '../../mixins/default-attrs';
+import layout from './template';
 
 const {
   Component,
-  Handlebars,
-  run:emberRun,
+  run,
+  observer,
   computed,
   get,
   set,
   RSVP,
-  A:emberArray
+  A:emberArray,
+  Handlebars: {
+    SafeString,
+    Utils: { escapeExpression }
+  }
 } = Ember;
-
-const { SafeString } = Handlebars;
-const EXTRA_ROW_PADDING = 1;
 
 const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMixin, {
   layout,
@@ -23,9 +24,10 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   attributeBindings: ['style'],
 
   defaultAttrs: {
-    scrollTimeout: 30,
     height: 200,
-    itemHeight: 20
+    rowPadding: 1,
+    itemHeight: 20,
+    scrollTimeout: 30
   },
 
   eventHandlers: {
@@ -55,9 +57,9 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     }
   },
 
-  style: computed('attrs.height', {
+  style: computed('height', {
     get() {
-      const height = Handlebars.Utils.escapeExpression(this.getAttr('height'));
+      const height = escapeExpression(this.getAttr('height'));
 
       return new SafeString(`height: ${height}px;`);
     }
@@ -65,23 +67,24 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   contentStyle: computed('_marginTop', '_contentHeight', {
     get() {
-      const marginTop = Handlebars.Utils.escapeExpression(get(this, '_marginTop'));
-      const height = Handlebars.Utils.escapeExpression(get(this, '_contentHeight'));
+      const marginTop = escapeExpression(get(this, '_marginTop'));
+      const height = escapeExpression(get(this, '_contentHeight'));
 
       return new SafeString(`height: ${height}px; margin-top: ${marginTop}px;`);
     }
   }).readOnly(),
 
-  visibleItems: computed('_startAt', '_visibleItemCount', '_items', {
+  visibleItems: computed('_startAt', '_visibleItemCount', '_items', 'rowPadding', {
     get() {
       const items = get(this, '_items');
       const startAt = get(this, '_startAt');
+      const rowPadding = this.getAttr('rowPadding');
       const _visibleItemCount = get(this, '_visibleItemCount');
       const itemsLength = get(items, 'length');
       const endAt = Math.min(itemsLength, startAt + _visibleItemCount);
       const onScrollBottomed = this.attrs.onScrollBottomed;
 
-      if (typeof onScrollBottomed === 'function' && (startAt + _visibleItemCount - EXTRA_ROW_PADDING) >= itemsLength) {
+      if (typeof onScrollBottomed === 'function' && (startAt + _visibleItemCount - rowPadding) >= itemsLength) {
         onScrollBottomed(startAt, endAt);
       }
 
@@ -95,21 +98,23 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     }
   }).readOnly(),
 
-  _visibleItemCount: computed('attrs.height', 'attrs.itemHeight', {
+  _visibleItemCount: computed('height', 'itemHeight', 'rowPadding', {
     get() {
       const height = this.getAttr('height');
+      const rowPadding = this.getAttr('rowPadding');
 
-      return Math.ceil(height / this.getAttr('itemHeight')) + EXTRA_ROW_PADDING;
+      return Math.ceil(height / this.getAttr('itemHeight')) + rowPadding;
     }
   }).readOnly(),
 
-  _marginTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'attrs.itemHeight', {
+  _marginTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'itemHeight', 'rowPadding', {
     get() {
+      const rowPadding = this.getAttr('rowPadding');
       const itemHeight = this.getAttr('itemHeight');
       const totalHeight = get(this, '_totalHeight');
       const margin = get(this, '_startAt') * itemHeight;
       const visibleItemCount = get(this, '_visibleItemCount');
-      const maxMargin = Math.max(0, totalHeight - ((visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
+      const maxMargin = Math.max(0, totalHeight - ((visibleItemCount - 1) * itemHeight) + (rowPadding * itemHeight));
 
       return Math.min(maxMargin, margin);
     }
@@ -141,7 +146,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   },
 
   calculateVisibleItems(positionIndex) {
-    emberRun(() => {
+    run(() => {
       const startAt = get(this, '_startAt');
       const scrolledAmount = this.$().scrollTop();
       const visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : Math.max(positionIndex);
@@ -152,19 +157,20 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     });
   },
 
-  scrollTo: Ember.observer('_positionIndex', function() {
+  scrollTo: observer('_positionIndex', function() {
+    const rowPadding = this.getAttr('rowPadding');
     const positionIndex = get(this, '_positionIndex');
     const itemHeight = this.getAttr('itemHeight');
     const totalHeight = get(this, '_totalHeight');
     const _visibleItemCount = get(this, '_visibleItemCount');
     const startingIndex = isNaN(positionIndex) ? get(this, '_startAt') : Math.max(positionIndex, 0);
     const startingPadding = itemHeight * startingIndex;
-    const maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + EXTRA_ROW_PADDING));
-    const maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (EXTRA_ROW_PADDING * itemHeight));
+    const maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + rowPadding));
+    const maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (rowPadding * itemHeight));
     const sanitizedIndex = Math.min(startingIndex, maxVisibleItemTop);
     const sanitizedPadding = (startingPadding > maxPadding) ? maxPadding : startingPadding;
 
-    this.scheduledRender = emberRun.scheduleOnce('afterRender', () => {
+    this.scheduledRender = run.scheduleOnce('afterRender', () => {
       this.calculateVisibleItems(sanitizedIndex);
       this.$().scrollTop(sanitizedPadding);
     });
@@ -186,7 +192,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   willDestroyElement() {
     this._super(...arguments);
-    Ember.run.cancel(this.scheduledRender);
+    run.cancel(this.scheduledRender);
   }
 });
 
