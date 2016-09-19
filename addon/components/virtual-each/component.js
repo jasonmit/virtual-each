@@ -61,7 +61,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     get() {
       const height = escapeExpression(this.getAttr('height'));
 
-      return new htmlSafe(`height: ${height}px;`);
+      return htmlSafe(`height: ${height}px;`);
     }
   }).readOnly(),
 
@@ -70,7 +70,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
       const marginTop = escapeExpression(get(this, '_marginTop'));
       const height = escapeExpression(get(this, '_contentHeight'));
 
-      return new htmlSafe(`height: ${height}px; margin-top: ${marginTop}px;`);
+      return htmlSafe(`height: ${height}px; margin-top: ${marginTop}px;`);
     }
   }).readOnly(),
 
