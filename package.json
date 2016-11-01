@@ -16,7 +16,7 @@
     "url": "http://github.com/jasonmit/virtual-each.git"
   },
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 4"
   },
   "author": "jason.mitchell.w@gmail.com",
   "license": "MIT",
