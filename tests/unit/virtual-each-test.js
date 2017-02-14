@@ -3,11 +3,8 @@
 import '../test-helper';
 
 import Ember from 'ember';
-import {
-  describeComponent,
-  it
-} from 'ember-mocha';
-import { describe } from 'mocha';
+import { setupComponentTest } from 'ember-mocha';
+import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import hbs from 'htmlbars-inline-precompile';
 
@@ -15,11 +12,10 @@ const { run } = Ember;
 const EXTRA_ROW_PADDING = 1;
 const SCROLL_TOP_BUFFER = 2;
 
-describeComponent('virtual-each', 'VirtualEachComponent', {
-  // specify the other units that are required for this test
-  // needs: ['component:foo', 'helper:bar']
-  integration: true
-}, function() {
+describe('VirtualEachComponent', function() {
+  setupComponentTest('virtual-each', {
+    integration: true
+  });
 
   it('renders', function() {
     // creates the component instance
