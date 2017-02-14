@@ -329,6 +329,24 @@ describeComponent('virtual-each', 'VirtualEachComponent', {
               expect($component.find('li').last().text()).to.contain('actual 199');
             });
           });
+
+          describe("rerendering when items are added or removed", function() {
+            it('renders the new item correctly', function() {
+                run(() => {
+                    this.get('items').pushObject('newItem 200');
+                });
+                var $component = this.$('.virtual-each');
+                expect($component.find('li').last().text()).to.contain('newItem 200');
+            });
+
+            it('removes deleted item from the visible list', function() {
+                run(() => {
+                    this.get('items').popObject();
+                });
+                var $component = this.$('.virtual-each');
+                expect($component.find('li').last().text()).to.contain('actual 198');
+            });
+          });
         });
       });
     });

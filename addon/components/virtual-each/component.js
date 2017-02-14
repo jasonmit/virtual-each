@@ -74,7 +74,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     }
   }).readOnly(),
 
-  visibleItems: computed('_startAt', '_visibleItemCount', '_items', 'rowPadding', {
+  visibleItems: computed('_startAt', '_visibleItemCount', '_items.[]', 'rowPadding', {
     get() {
       const items = get(this, '_items');
       const startAt = get(this, '_startAt');
