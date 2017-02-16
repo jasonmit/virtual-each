@@ -61,6 +61,10 @@ Add the following CSS snippet to `styles/app.css`:
 }
 ```
 
+## Known "Gotchas"
+
+* Not defining an `itemHeight`, or defining a less-than expected height, will result in unexpected jumping behavior during scrolling.  `itemHeight` should be set to _exact_ height of a row.
+
 ## Demo
 
 ![](images/screencast.gif)
