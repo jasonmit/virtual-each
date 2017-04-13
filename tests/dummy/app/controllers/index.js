@@ -35,7 +35,7 @@ export default Controller.extend({
   },
 
   positionIndex: null,
-  height: 200,
+  height: 500,
   scrollTimeout: null,
   selected: 'people',
 
