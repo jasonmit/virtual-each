@@ -144,7 +144,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   calculateVisibleItems(positionIndex) {
     run(() => {
       let startAt = get(this, '_startAt');
-      let scrolledAmount = this.$().scrollTop();
+      let scrolledAmount = this.element.scrollTop;
       let visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : positionIndex;
 
       if (visibleStart !== startAt) {
@@ -168,7 +168,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
     this.scheduledRender = run.scheduleOnce('afterRender', () => {
       this.calculateVisibleItems(sanitizedIndex);
-      this.$().scrollTop(sanitizedPadding);
+      this.element.scrollTop = sanitizedPadding;
     });
   }),
 
