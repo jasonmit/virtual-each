@@ -148,7 +148,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     run(() => {
       let startAt = get(this, '_startAt');
       let scrolledAmount = this.$().scrollTop();
-      let visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : Math.max(positionIndex);
+      let visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : positionIndex;
 
       if (visibleStart !== startAt) {
         set(this, '_startAt', visibleStart);
