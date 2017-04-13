@@ -11,6 +11,7 @@ const {
   get,
   getProperties,
   set,
+  setProperties,
   RSVP,
   A:emberArray,
   String: { htmlSafe },
@@ -23,6 +24,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   layout,
   classNames: ['virtual-each'],
   attributeBindings: ['style'],
+  isWebkit: /WebKit/.test(navigator && navigator.userAgent),
 
   defaultAttrs: {
     height: 200,
@@ -131,20 +133,12 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   init() {
     this._super(...arguments);
 
-    this.setProperties({
+    setProperties(this, {
       _items: emberArray(),
       _startAt: 0,
       _totalHeight: 0,
       _scrolledByWheel: false
     });
-  },
-
-  didInsertElement() {
-    this._super(...arguments);
-
-    let { userAgent:ua } = navigator || {};
-
-    this.isWebkit = /WebKit/.test(ua);
   },
 
   calculateVisibleItems(positionIndex) {
@@ -184,7 +178,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     RSVP.cast(this.getAttr('items')).then((attrItems) => {
       let items = emberArray(attrItems);
 
-      this.setProperties({
+      setProperties(this, {
         _items: items,
         _positionIndex: this.getAttr('positionIndex'),
         _totalHeight: Math.max(get(items, 'length') * this.getAttr('itemHeight'), 0)
