@@ -1,6 +1,6 @@
 <ul class="infinite-list-content" style={{contentStyle}}>
-{{#each visibleItems key='@index' as |item|}}
-  <li class="virtual-item">
+{{#each visibleItems key='@index' as |item idx|}}
+  <li class="virtual-item visible-item-{{idx}}">
     {{yield item.raw item.actualIndex item.virtualIndex}}
   </li>
 {{else}}

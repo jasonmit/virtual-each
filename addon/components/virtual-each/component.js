@@ -26,7 +26,6 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   defaultAttrs: {
     height: 200,
-    rowPadding: 1,
     itemHeight: 20,
     scrollTimeout: 30
   },
@@ -58,6 +57,10 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     }
   },
 
+  bufferSize: computed('rowPadding', function() {
+    return get(this, 'rowPadding') || 1;
+  }),
+
   style: computed('height', {
     get() {
       let height = escapeExpression(this.getAttr('height'));
@@ -75,15 +78,15 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     }
   }).readOnly(),
 
-  visibleItems: computed('_startAt', '_visibleItemCount', '_items.[]', 'rowPadding', {
+  visibleItems: computed('_startAt', '_itemCount', '_items.[]', 'bufferSize', {
     get() {
-      let { _items, _startAt, _visibleItemCount } = getProperties(this, '_items', '_startAt', '_visibleItemCount');
-      let rowPadding = this.getAttr('rowPadding');
+      let { _items, _startAt, _itemCount } = getProperties(this, '_items', '_startAt', '_itemCount');
+      let bufferSize = get(this, 'bufferSize');
       let itemsLength = get(_items, 'length');
-      let endAt = Math.min(itemsLength, _startAt + _visibleItemCount);
+      let endAt = Math.min(itemsLength, _startAt + _itemCount);
       let { onScrollBottomed } = this.attrs;
 
-      if (typeof onScrollBottomed === 'function' && (_startAt + _visibleItemCount - rowPadding) >= itemsLength) {
+      if (typeof onScrollBottomed === 'function' && (_startAt + _itemCount - bufferSize) >= itemsLength) {
         setTimeout(() => onScrollBottomed(_startAt, endAt), 5);
       }
 
@@ -97,23 +100,23 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     }
   }).readOnly(),
 
-  _visibleItemCount: computed('height', 'itemHeight', 'rowPadding', {
+  _itemCount: computed('height', 'itemHeight', 'bufferSize', {
     get() {
       let height = this.getAttr('height');
-      let rowPadding = this.getAttr('rowPadding');
+      let bufferSize = get(this, 'bufferSize');
 
-      return Math.ceil(height / this.getAttr('itemHeight')) + rowPadding;
+      return Math.ceil(height / this.getAttr('itemHeight')) + bufferSize;
     }
   }).readOnly(),
 
-  _marginTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'itemHeight', 'rowPadding', {
+  _marginTop: computed('_totalHeight', '_startAt', '_itemCount', 'itemHeight', 'bufferSize', {
     get() {
-      let rowPadding = this.getAttr('rowPadding');
+      let bufferSize = get(this, 'bufferSize');
       let itemHeight = this.getAttr('itemHeight');
       let totalHeight = get(this, '_totalHeight');
       let margin = get(this, '_startAt') * itemHeight;
-      let visibleItemCount = get(this, '_visibleItemCount');
-      let maxMargin = Math.max(0, totalHeight - ((visibleItemCount - 1) * itemHeight) + (rowPadding * itemHeight));
+      let visibleItemCount = get(this, '_itemCount');
+      let maxMargin = Math.max(0, totalHeight - ((visibleItemCount - 1) * itemHeight) + (bufferSize * itemHeight));
 
       return Math.min(maxMargin, margin);
     }
@@ -157,15 +160,15 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   },
 
   scrollTo: observer('_positionIndex', function() {
-    let rowPadding = this.getAttr('rowPadding');
+    let bufferSize = get(this, 'bufferSize');
     let positionIndex = get(this, '_positionIndex');
     let itemHeight = this.getAttr('itemHeight');
     let totalHeight = get(this, '_totalHeight');
-    let _visibleItemCount = get(this, '_visibleItemCount');
+    let _itemCount = get(this, '_itemCount');
     let startingIndex = isNaN(positionIndex) ? get(this, '_startAt') : Math.max(positionIndex, 0);
     let startingPadding = itemHeight * startingIndex;
-    let maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + rowPadding));
-    let maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (rowPadding * itemHeight));
+    let maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _itemCount + bufferSize));
+    let maxPadding = Math.max(0, totalHeight - ((_itemCount - 1) * itemHeight) + (bufferSize * itemHeight));
     let sanitizedIndex = Math.min(startingIndex, maxVisibleItemTop);
     let sanitizedPadding = (startingPadding > maxPadding) ? maxPadding : startingPadding;
 
