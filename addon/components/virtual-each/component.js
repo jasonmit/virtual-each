@@ -9,6 +9,7 @@ const {
   observer,
   computed,
   get,
+  getProperties,
   set,
   RSVP,
   A:emberArray,
@@ -38,7 +39,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     scroll(e) {
       e.preventDefault();
 
-      const scrollTimeout = this.getAttr('scrollTimeout');
+      let scrollTimeout = this.getAttr('scrollTimeout');
 
       if (scrollTimeout && this.isWebkit && this._scrolledByWheel) {
         this._scrolledByWheel = false;
@@ -59,7 +60,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   style: computed('height', {
     get() {
-      const height = escapeExpression(this.getAttr('height'));
+      let height = escapeExpression(this.getAttr('height'));
 
       return htmlSafe(`height: ${height}px;`);
     }
@@ -67,8 +68,8 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   contentStyle: computed('_marginTop', '_contentHeight', {
     get() {
-      const marginTop = escapeExpression(get(this, '_marginTop'));
-      const height = escapeExpression(get(this, '_contentHeight'));
+      let marginTop = escapeExpression(get(this, '_marginTop'));
+      let height = escapeExpression(get(this, '_contentHeight'));
 
       return htmlSafe(`height: ${height}px; margin-top: ${marginTop}px;`);
     }
@@ -76,22 +77,20 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   visibleItems: computed('_startAt', '_visibleItemCount', '_items.[]', 'rowPadding', {
     get() {
-      const items = get(this, '_items');
-      const startAt = get(this, '_startAt');
-      const rowPadding = this.getAttr('rowPadding');
-      const _visibleItemCount = get(this, '_visibleItemCount');
-      const itemsLength = get(items, 'length');
-      const endAt = Math.min(itemsLength, startAt + _visibleItemCount);
-      const onScrollBottomed = this.attrs.onScrollBottomed;
+      let { _items, _startAt, _visibleItemCount } = getProperties(this, '_items', '_startAt', '_visibleItemCount');
+      let rowPadding = this.getAttr('rowPadding');
+      let itemsLength = get(_items, 'length');
+      let endAt = Math.min(itemsLength, _startAt + _visibleItemCount);
+      let { onScrollBottomed } = this.attrs;
 
-      if (typeof onScrollBottomed === 'function' && (startAt + _visibleItemCount - rowPadding) >= itemsLength) {
-        onScrollBottomed(startAt, endAt);
+      if (typeof onScrollBottomed === 'function' && (_startAt + _visibleItemCount - rowPadding) >= itemsLength) {
+        setTimeout(() => onScrollBottomed(_startAt, endAt), 5);
       }
 
-      return items.slice(startAt, endAt).map((item, index) => {
+      return _items.slice(_startAt, endAt).map((item, index) => {
         return {
           raw: item,
-          actualIndex: startAt + index,
+          actualIndex: _startAt + index,
           virtualIndex: index
         };
       });
@@ -100,8 +99,8 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   _visibleItemCount: computed('height', 'itemHeight', 'rowPadding', {
     get() {
-      const height = this.getAttr('height');
-      const rowPadding = this.getAttr('rowPadding');
+      let height = this.getAttr('height');
+      let rowPadding = this.getAttr('rowPadding');
 
       return Math.ceil(height / this.getAttr('itemHeight')) + rowPadding;
     }
@@ -109,12 +108,12 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   _marginTop: computed('_totalHeight', '_startAt', '_visibleItemCount', 'itemHeight', 'rowPadding', {
     get() {
-      const rowPadding = this.getAttr('rowPadding');
-      const itemHeight = this.getAttr('itemHeight');
-      const totalHeight = get(this, '_totalHeight');
-      const margin = get(this, '_startAt') * itemHeight;
-      const visibleItemCount = get(this, '_visibleItemCount');
-      const maxMargin = Math.max(0, totalHeight - ((visibleItemCount - 1) * itemHeight) + (rowPadding * itemHeight));
+      let rowPadding = this.getAttr('rowPadding');
+      let itemHeight = this.getAttr('itemHeight');
+      let totalHeight = get(this, '_totalHeight');
+      let margin = get(this, '_startAt') * itemHeight;
+      let visibleItemCount = get(this, '_visibleItemCount');
+      let maxMargin = Math.max(0, totalHeight - ((visibleItemCount - 1) * itemHeight) + (rowPadding * itemHeight));
 
       return Math.min(maxMargin, margin);
     }
@@ -140,16 +139,16 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   didInsertElement() {
     this._super(...arguments);
 
-    const { userAgent:ua } = navigator || {};
+    let { userAgent:ua } = navigator || {};
 
     this.isWebkit = /WebKit/.test(ua);
   },
 
   calculateVisibleItems(positionIndex) {
     run(() => {
-      const startAt = get(this, '_startAt');
-      const scrolledAmount = this.$().scrollTop();
-      const visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : Math.max(positionIndex);
+      let startAt = get(this, '_startAt');
+      let scrolledAmount = this.$().scrollTop();
+      let visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : Math.max(positionIndex);
 
       if (visibleStart !== startAt) {
         set(this, '_startAt', visibleStart);
@@ -158,17 +157,17 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   },
 
   scrollTo: observer('_positionIndex', function() {
-    const rowPadding = this.getAttr('rowPadding');
-    const positionIndex = get(this, '_positionIndex');
-    const itemHeight = this.getAttr('itemHeight');
-    const totalHeight = get(this, '_totalHeight');
-    const _visibleItemCount = get(this, '_visibleItemCount');
-    const startingIndex = isNaN(positionIndex) ? get(this, '_startAt') : Math.max(positionIndex, 0);
-    const startingPadding = itemHeight * startingIndex;
-    const maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + rowPadding));
-    const maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (rowPadding * itemHeight));
-    const sanitizedIndex = Math.min(startingIndex, maxVisibleItemTop);
-    const sanitizedPadding = (startingPadding > maxPadding) ? maxPadding : startingPadding;
+    let rowPadding = this.getAttr('rowPadding');
+    let positionIndex = get(this, '_positionIndex');
+    let itemHeight = this.getAttr('itemHeight');
+    let totalHeight = get(this, '_totalHeight');
+    let _visibleItemCount = get(this, '_visibleItemCount');
+    let startingIndex = isNaN(positionIndex) ? get(this, '_startAt') : Math.max(positionIndex, 0);
+    let startingPadding = itemHeight * startingIndex;
+    let maxVisibleItemTop = Math.max(0, (get(this, '_items.length') - _visibleItemCount + rowPadding));
+    let maxPadding = Math.max(0, totalHeight - ((_visibleItemCount - 1) * itemHeight) + (rowPadding * itemHeight));
+    let sanitizedIndex = Math.min(startingIndex, maxVisibleItemTop);
+    let sanitizedPadding = (startingPadding > maxPadding) ? maxPadding : startingPadding;
 
     this.scheduledRender = run.scheduleOnce('afterRender', () => {
       this.calculateVisibleItems(sanitizedIndex);
@@ -180,7 +179,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
     this._super(...arguments);
 
     RSVP.cast(this.getAttr('items')).then((attrItems) => {
-      const items = emberArray(attrItems);
+      let items = emberArray(attrItems);
 
       this.setProperties({
         _items: items,
