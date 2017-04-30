@@ -143,6 +143,10 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   calculateVisibleItems(positionIndex) {
     run(() => {
+      if (this.get('isDestroyed')) {
+        return;
+      }
+
       let startAt = get(this, '_startAt');
       let scrolledAmount = this.element.scrollTop;
       let visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : positionIndex;
