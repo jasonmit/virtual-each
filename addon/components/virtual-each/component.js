@@ -44,14 +44,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
       if (scrollTimeout && this.isWebkit && this._scrolledByWheel) {
         this._scrolledByWheel = false;
-
-        if (!this._scrollTimer) {
-          this._scrollTimer = setTimeout(() => {
-            this._scrollTimer = null;
-            this.calculateVisibleItems();
-          }, scrollTimeout);
-        }
-
+        run.throttle(this, this.calculateVisibleItems, scrollTimeout);
         return;
       }
 
