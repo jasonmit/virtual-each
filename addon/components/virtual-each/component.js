@@ -44,7 +44,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
       if (scrollTimeout && this.isWebkit && this._scrolledByWheel) {
         this._scrolledByWheel = false;
-        run.throttle(this, this.calculateVisibleItems, scrollTimeout);
+        this._scrollThrottleTimeut = run.throttle(this, this.calculateVisibleItems, scrollTimeout);
         return;
       }
 
@@ -82,7 +82,7 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
       let { onScrollBottomed } = this.attrs;
 
       if (typeof onScrollBottomed === 'function' && (_startAt + _itemCount - bufferSize) >= itemsLength) {
-        setTimeout(() => onScrollBottomed(_startAt, endAt), 5);
+        this._scrollBottomedTimeout = run.later(() => onScrollBottomed(_startAt, endAt), 5);
       }
 
       return _items.slice(_startAt, endAt).map((item, index) => {
@@ -135,19 +135,17 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   },
 
   calculateVisibleItems(positionIndex) {
-    run(() => {
-      if (this.get('isDestroyed')) {
-        return;
-      }
+    if (this.get('isDestroyed')) {
+      return;
+    }
 
-      let startAt = get(this, '_startAt');
-      let scrolledAmount = this.element.scrollTop;
-      let visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : positionIndex;
+    let startAt = get(this, '_startAt');
+    let scrolledAmount = this.element.scrollTop;
+    let visibleStart = isNaN(positionIndex) ? Math.floor(scrolledAmount / this.getAttr('itemHeight')) : positionIndex;
 
-      if (visibleStart !== startAt) {
-        set(this, '_startAt', visibleStart);
-      }
-    });
+    if (visibleStart !== startAt) {
+      set(this, '_startAt', visibleStart);
+    }
   },
 
   scrollTo: observer('_positionIndex', function() {
@@ -185,7 +183,10 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
 
   willDestroyElement() {
     this._super(...arguments);
+
     run.cancel(this.scheduledRender);
+    run.cancel(this._scrollThrottleTimeut);
+    run.cancel(this._scrollBottomedTimeout);
   }
 });
 
