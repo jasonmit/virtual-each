@@ -189,11 +189,6 @@ const VirtualEachComponent = Component.extend(EventListenerMixin, DefaultAttrsMi
   willDestroyElement() {
     this._super(...arguments);
     
-    if (this._scrollTimer) {
-      clearTimeout(this._scrollTimer);
-      this._scrollTimer = null;
-    }
-    
     run.cancel(this.scheduledRender);
   }
 });
