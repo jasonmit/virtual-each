@@ -25,7 +25,7 @@
     "ember-browsery-stats": "0.1.1",
     "ember-cli": "2.12.2",
     "ember-cli-app-version": "^2.0.1",
-    "ember-cli-chai": "^0.3.2",
+    "ember-cli-chai": "^0.4.0",
     "ember-cli-dependency-checker": "^1.2.0",
     "ember-cli-github-pages": "0.1.2",
     "ember-cli-htmlbars-inline-precompile": "^0.3.1",
