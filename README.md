@@ -71,7 +71,7 @@ Add the following CSS snippet to `styles/app.css`:
 
 ## Requirements
 
-* Ember >= 1.13.0
+* Ember >= 2.12.0
 
 ## Contributing
 
@@ -89,4 +89,4 @@ Add the following CSS snippet to `styles/app.css`:
 * `ember test --server`
 
 [embadge]: http://embadge.io/
-[ember-badge]: http://embadge.io/v1/badge.svg?start=1.13.0
+[ember-badge]: http://embadge.io/v1/badge.svg?start=2.12.0
