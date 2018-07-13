@@ -13,7 +13,7 @@ export default Ember.Mixin.create({
     const value = this._super(...arguments);
 
     if (typeof value === 'undefined') {
-      return this.defaultAttrs[attrName];
+      return this.get(`defaultAttrs.${attrName}`);
     }
 
     return value;
